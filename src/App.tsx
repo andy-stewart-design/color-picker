@@ -1,23 +1,6 @@
-import {
-  CSSProperties,
-  useState,
-  useActionState,
-  startTransition,
-} from "react";
-import { converter, formatCss, formatHex } from "culori";
+import { CSSProperties, useActionState, startTransition, useRef } from "react";
+import { converter, formatHex } from "culori";
 import "./main.css";
-
-type Hsl = ReturnType<typeof hsl>;
-
-interface HslParams {
-  name: "hue" | "saturation" | "lightness";
-  value: number;
-}
-
-interface HexParams {
-  name: "hex";
-  value: string;
-}
 
 interface ColorDefinition {
   hex: string;
@@ -47,6 +30,7 @@ const defaultColor = {
 
 function App() {
   const [formState, formAction] = useActionState(handleSubmit, defaultColor);
+  const formRef = useRef<HTMLFormElement>(null);
 
   function handleHexInput(e: React.ChangeEvent<HTMLInputElement>) {
     let value = e.target.value.toUpperCase();
@@ -58,8 +42,6 @@ function App() {
   function handleSubmit(previousState: ColorDefinition, formData: FormData) {
     const nextState = validateFormData(previousState, formData);
     const changedValues = compareColorDefinitions(previousState, nextState);
-
-    // console.log(nextState, previousState, Object.keys(changedValues).length);
 
     if ("hex" in changedValues && changedValues.hex !== undefined) {
       const nextHsl = hsl(`#${changedValues.hex}`);
@@ -82,8 +64,6 @@ function App() {
         hex: nextHex.replace("#", ""),
       };
     }
-
-    return nextState;
   }
 
   function onSubmit(event: React.FormEvent) {
@@ -95,52 +75,19 @@ function App() {
     }
   }
 
-  const [currentColor, setCurrentColor] = useState(() => ({
-    hex: "#43c5ef",
-    hsl: hsl("#43c5ef"),
-  }));
-
-  const lightnessArray = createLinearDistribution(
-    currentColor.hsl.l,
-    11,
-    0.05,
-    0.9
-  );
+  const lightnessArray = createLinearDistribution(formState.l, 11, 0.05, 0.9);
 
   const chromaArray = createParabolicDistribution(
     lightnessArray.range.length,
-    Math.max(
-      0,
-      currentColor.hsl.s - (currentColor.hsl.s / 16) * lightnessArray.keyIndex
-    ),
-    currentColor.hsl.s,
+    Math.max(0, formState.s - (formState.s / 16) * lightnessArray.keyIndex),
+    formState.s,
     lightnessArray.keyIndex - Math.floor(lightnessArray.range.length / 2)
   );
-
-  function updateCurrentColor({ name, value }: HslParams | HexParams) {
-    if (name === "saturation" || name === "lightness" || name === "hue") {
-      const key = name[0];
-      const hsl = { ...currentColor.hsl, [key]: value };
-
-      setCurrentColor((current) => {
-        return {
-          hex: formatHex(hsl),
-          hsl: { ...current.hsl, [key]: value },
-        };
-      });
-    } else if (name === "hex") {
-      const hex = value.startsWith("#") ? value : `#${value}`;
-      setCurrentColor({
-        hex: value,
-        hsl: hsl(value),
-      });
-    }
-  }
 
   return (
     <>
       <header>
-        <form onSubmit={onSubmit} key={JSON.stringify(formState)}>
+        <form onSubmit={onSubmit} key={JSON.stringify(formState)} ref={formRef}>
           <div>
             <span style={{ opacity: 0.4 }}>#</span>
             <input
@@ -150,120 +97,60 @@ function App() {
               defaultValue={formState.hex.replace("#", "")}
             />
           </div>
-          <input
-            type="range"
-            name="hue"
-            defaultValue={formState.h}
-            step="any"
-            min={0}
-            max={360}
-            onMouseUp={(e) =>
-              (
-                (e.target as HTMLInputElement).parentElement as HTMLFormElement
-              ).requestSubmit()
-            }
-          />
-          <input
-            type="range"
-            name="saturation"
-            defaultValue={formState.s}
-            step="any"
-            min={0}
-            max={1}
-            onMouseUp={(e) =>
-              (
-                (e.target as HTMLInputElement).parentElement as HTMLFormElement
-              ).requestSubmit()
-            }
-          />
-          <input
-            type="range"
-            name="lightness"
-            defaultValue={formState.l}
-            step="any"
-            min={0}
-            max={1}
-            onMouseUp={(e) =>
-              (
-                (e.target as HTMLInputElement).parentElement as HTMLFormElement
-              ).requestSubmit()
-            }
-          />
+          <div className="slider">
+            <label>
+              <span>Hue</span>
+              <input
+                type="range"
+                name="hue"
+                defaultValue={formState.h}
+                step="any"
+                min={0}
+                max={360}
+                onMouseUp={() => formRef.current?.requestSubmit()}
+              />
+            </label>
+          </div>
+          <div className="slider">
+            <label>
+              <span>Saturation</span>
+              <input
+                type="range"
+                name="saturation"
+                defaultValue={formState.s}
+                step="any"
+                min={0}
+                max={1}
+                onMouseUp={() => formRef.current?.requestSubmit()}
+              />
+            </label>
+          </div>
+          <div className="slider">
+            <label>
+              <span>Lightness</span>
+              <input
+                type="range"
+                name="lightness"
+                defaultValue={formState.l}
+                step="any"
+                min={0}
+                max={1}
+                onMouseUp={() => formRef.current?.requestSubmit()}
+              />
+            </label>
+          </div>
         </form>
-        <div>
-          <p className="swatch">
-            <span style={{ background: currentColor.hex }} />
-            <input type="text" value={currentColor.hex} readOnly />
-          </p>
-        </div>
-        <div className="slider">
-          <label>
-            <span>Hue</span>
-            <input
-              type="range"
-              name="hue"
-              value={currentColor.hsl.h}
-              onChange={(e) =>
-                updateCurrentColor({
-                  name: "hue",
-                  value: e.target.valueAsNumber,
-                })
-              }
-              min={0}
-              max={360}
-              step={0.1}
-            />
-          </label>
-        </div>
-        <div className="slider">
-          <label>
-            <span>Saturation</span>
-            <input
-              type="range"
-              name="saturation"
-              value={currentColor.hsl.s}
-              onChange={(e) => {
-                updateCurrentColor({
-                  name: "saturation",
-                  value: e.target.valueAsNumber,
-                });
-              }}
-              min={0}
-              max={1}
-              step={0.01}
-            />
-          </label>
-        </div>
-        <div className="slider">
-          <label>
-            <span>Lightness</span>
-            <input
-              type="range"
-              name="lightness"
-              value={currentColor.hsl.l}
-              onChange={(e) =>
-                updateCurrentColor({
-                  name: "lightness",
-                  value: e.target.valueAsNumber,
-                })
-              }
-              min={0}
-              max={1}
-              step={0.01}
-            />
-          </label>
-        </div>
       </header>
       <main>
         {lightnessArray.range.map((value, index) => (
           <div
+            key={index}
             className="color-card"
-            key={value}
             style={
               {
-                backgroundColor: formatCss({
+                backgroundColor: formatHex({
                   mode: "hsl",
-                  h: currentColor.hsl.h,
+                  h: formState.h,
                   l: value,
                   s: chromaArray[index],
                 }),
@@ -273,15 +160,8 @@ function App() {
             }
           >
             <ul>
-              <li>
-                {formatHex({
-                  mode: "hsl",
-                  h: currentColor.hsl.h,
-                  l: value,
-                  s: chromaArray[index],
-                })}
-              </li>
-              <li>h: {roundTo(currentColor.hsl.h, 1)}</li>
+              <li>{formState.hex}</li>
+              <li>h: {roundTo(formState.h, 1)}</li>
               <li>s: {roundTo(chromaArray[index])}</li>
               <li>l: {roundTo(value)}</li>
             </ul>
