@@ -59,7 +59,7 @@ function App() {
     const nextState = validateFormData(previousState, formData);
     const changedValues = compareColorDefinitions(previousState, nextState);
 
-    console.log(nextState, previousState, Object.keys(changedValues).length);
+    // console.log(nextState, previousState, Object.keys(changedValues).length);
 
     if ("hex" in changedValues && changedValues.hex !== undefined) {
       const nextHsl = hsl(`#${changedValues.hex}`);
