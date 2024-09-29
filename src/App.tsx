@@ -1,5 +1,12 @@
 import { CSSProperties, useActionState, startTransition, useRef } from "react";
 import { converter, formatHex } from "culori";
+import {
+  Label,
+  Slider,
+  SliderOutput,
+  SliderThumb,
+  SliderTrack,
+} from "react-aria-components";
 import "./main.css";
 
 interface ColorDefinition {
@@ -97,35 +104,49 @@ function App() {
               defaultValue={formState.hex.replace("#", "")}
             />
           </div>
-          <div className="slider">
-            <label>
-              <span>Hue</span>
-              <input
-                type="range"
-                name="hue"
-                defaultValue={formState.h}
-                step="any"
-                min={0}
-                max={360}
-                onMouseUp={() => formRef.current?.requestSubmit()}
-              />
-            </label>
-          </div>
-          <div className="slider">
-            <label>
-              <span>Saturation</span>
-              <input
-                type="range"
-                name="saturation"
-                defaultValue={formState.s}
-                step="any"
-                min={0}
-                max={1}
-                onMouseUp={() => formRef.current?.requestSubmit()}
-              />
-            </label>
-          </div>
-          <div className="slider">
+          <Slider
+            className="react-aria-slider"
+            defaultValue={formState.h}
+            minValue={0}
+            maxValue={360}
+            step={0.1}
+            onChangeEnd={() => formRef.current?.requestSubmit()}
+          >
+            <Label className="label">Hue</Label>
+            <SliderOutput className="output" />
+            <SliderTrack className="track">
+              <SliderThumb name="hue" className="thumb" />
+            </SliderTrack>
+          </Slider>
+          <Slider
+            className="react-aria-slider"
+            defaultValue={formState.s}
+            minValue={0}
+            maxValue={1}
+            step={0.01}
+            onChangeEnd={() => formRef.current?.requestSubmit()}
+          >
+            <Label className="label">Saturation</Label>
+            <SliderOutput className="output" />
+            <SliderTrack className="track">
+              <SliderThumb name="saturation" className="thumb" />
+            </SliderTrack>
+          </Slider>
+          <Slider
+            className="react-aria-slider"
+            defaultValue={formState.l}
+            minValue={0}
+            maxValue={1}
+            step={0.01}
+            onChangeEnd={() => formRef.current?.requestSubmit()}
+          >
+            <Label className="label">Lightness</Label>
+            <SliderOutput className="output" />
+            <SliderTrack className="track">
+              <SliderThumb name="lightness" className="thumb" />
+            </SliderTrack>
+          </Slider>
+          {/* <div className="slider">
             <label>
               <span>Lightness</span>
               <input
@@ -138,7 +159,7 @@ function App() {
                 onMouseUp={() => formRef.current?.requestSubmit()}
               />
             </label>
-          </div>
+          </div> */}
         </form>
       </header>
       <main>
@@ -166,7 +187,6 @@ function App() {
               <li>l: {roundTo(value)}</li>
             </ul>
             <div className="indicators">
-              {/* <span className="indicator saturation"></span> */}
               <span
                 className={`indicator lightness ${
                   index === lightnessArray.keyIndex ? "anchor" : ""

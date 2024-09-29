@@ -13,6 +13,7 @@
     "colorjs.io": "^0.5.2",
     "culori": "^4.0.1",
     "react": "19.0.0-rc-3edc000d-20240926",
+    "react-aria-components": "^1.3.3",
     "react-dom": "19.0.0-rc-3edc000d-20240926"
   },
   "devDependencies": {
