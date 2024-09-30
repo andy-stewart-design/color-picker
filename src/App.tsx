@@ -1,11 +1,22 @@
-import { CSSProperties, useActionState, startTransition, useRef } from "react";
+import {
+  CSSProperties,
+  useActionState,
+  startTransition,
+  useRef,
+  useState,
+  useContext,
+} from "react";
 import { converter, formatHex } from "culori";
 import {
   Label,
   Slider,
-  SliderOutput,
   SliderThumb,
   SliderTrack,
+  Input,
+  LabelContext,
+  NumberField,
+  SliderStateContext,
+  useSlottedContext,
 } from "react-aria-components";
 import "./main.css";
 
@@ -23,35 +34,34 @@ function hsl(color: string) {
   if (!colorHSL) throw new Error(`Invalid color: ${color}`);
 
   const { h, s, l, mode } = colorHSL;
-  if (h === undefined) throw new Error(`Invalid color: ${color}`);
+  if (h === undefined) {
+    return { h: 0, s, l, mode };
+  }
 
   return { h, s, l, mode };
 }
 
 const defaultColor = {
   hex: "43c5ef",
-  h: 194.65116279069767,
-  s: 0.8431372549019608,
-  l: 0.6,
+  h: roundTo(194.65116279069767, 2),
+  s: roundTo(0.8431372549019608, 2),
+  l: roundTo(0.6, 2),
 };
 
 function App() {
   const [formState, formAction] = useActionState(handleSubmit, defaultColor);
+  const [swatchColor, setSwatchColor] = useState(`#${formState.hex}`);
   const formRef = useRef<HTMLFormElement>(null);
-
-  function handleHexInput(e: React.ChangeEvent<HTMLInputElement>) {
-    let value = e.target.value.toUpperCase();
-    value = value.replace(/[^0-9A-F]/g, "");
-    value = value.slice(0, 6);
-    e.target.value = value;
-  }
 
   function handleSubmit(previousState: ColorDefinition, formData: FormData) {
     const nextState = validateFormData(previousState, formData);
     const changedValues = compareColorDefinitions(previousState, nextState);
 
+    console.log("changedValues", changedValues);
+
     if ("hex" in changedValues && changedValues.hex !== undefined) {
       const nextHsl = hsl(`#${changedValues.hex}`);
+      setSwatchColor(`#${changedValues.hex}`);
       return {
         hex: changedValues.hex.toString(),
         h: nextHsl.h,
@@ -59,15 +69,23 @@ function App() {
         l: nextHsl.l,
       };
     } else {
+      const nextH = "h" in changedValues ? nextState.h : previousState.h;
+      const nextS = "s" in changedValues ? nextState.s : previousState.s;
+      const nextL = "l" in changedValues ? nextState.l : previousState.l;
+
       const nextHex = formatHex({
         mode: "hsl",
-        h: nextState.h,
-        s: nextState.s,
-        l: nextState.l,
+        h: nextH,
+        s: nextS,
+        l: nextL,
       });
 
+      setSwatchColor(nextHex);
+
       return {
-        ...nextState,
+        h: nextH,
+        s: nextS,
+        l: nextL,
         hex: nextHex.replace("#", ""),
       };
     }
@@ -80,6 +98,20 @@ function App() {
       const formData = new FormData(form);
       startTransition(() => formAction(formData));
     }
+  }
+
+  function updateCurrentColor(key: "h" | "s" | "l", value: number) {
+    const currentHsl = {
+      h: formState.h,
+      s: formState.s,
+      l: formState.l,
+    };
+    const nextHex = formatHex({
+      ...currentHsl,
+      mode: "hsl",
+      [key]: value,
+    });
+    setSwatchColor(nextHex);
   }
 
   const lightnessArray = createLinearDistribution(formState.l, 11, 0.05, 0.9);
@@ -95,13 +127,29 @@ function App() {
     <>
       <header>
         <form onSubmit={onSubmit} key={JSON.stringify(formState)} ref={formRef}>
-          <div>
+          <div className="hex-input">
+            <span
+              className="swatch"
+              style={{ backgroundColor: swatchColor }}
+            ></span>
             <span style={{ opacity: 0.4 }}>#</span>
             <input
-              key={formState.hex}
               name="hex"
-              onChange={handleHexInput}
-              defaultValue={formState.hex.replace("#", "")}
+              onChange={handleHexChange}
+              onKeyDown={(e) => {
+                if (e.key !== "Enter") return;
+                const input = e.target;
+                if (!(input instanceof HTMLInputElement)) return;
+
+                e.preventDefault();
+                const nextValue = validateHexValue(input.value);
+
+                if (nextValue) {
+                  input.value = nextValue;
+                  formRef.current?.requestSubmit();
+                }
+              }}
+              defaultValue={formState.hex}
             />
           </div>
           <Slider
@@ -109,11 +157,12 @@ function App() {
             defaultValue={formState.h}
             minValue={0}
             maxValue={360}
-            step={0.1}
+            step={0.01}
+            onChange={(value) => updateCurrentColor("h", value)}
             onChangeEnd={() => formRef.current?.requestSubmit()}
           >
             <Label className="label">Hue</Label>
-            <SliderOutput className="output" />
+            <SliderNumberField className="output" />
             <SliderTrack className="track">
               <SliderThumb name="hue" className="thumb" />
             </SliderTrack>
@@ -124,10 +173,11 @@ function App() {
             minValue={0}
             maxValue={1}
             step={0.01}
+            onChange={(value) => updateCurrentColor("s", value)}
             onChangeEnd={() => formRef.current?.requestSubmit()}
           >
             <Label className="label">Saturation</Label>
-            <SliderOutput className="output" />
+            <SliderNumberField className="output" />
             <SliderTrack className="track">
               <SliderThumb name="saturation" className="thumb" />
             </SliderTrack>
@@ -138,28 +188,15 @@ function App() {
             minValue={0}
             maxValue={1}
             step={0.01}
+            onChange={(value) => updateCurrentColor("l", value)}
             onChangeEnd={() => formRef.current?.requestSubmit()}
           >
             <Label className="label">Lightness</Label>
-            <SliderOutput className="output" />
+            <SliderNumberField className="output" />
             <SliderTrack className="track">
               <SliderThumb name="lightness" className="thumb" />
             </SliderTrack>
           </Slider>
-          {/* <div className="slider">
-            <label>
-              <span>Lightness</span>
-              <input
-                type="range"
-                name="lightness"
-                defaultValue={formState.l}
-                step="any"
-                min={0}
-                max={1}
-                onMouseUp={() => formRef.current?.requestSubmit()}
-              />
-            </label>
-          </div> */}
         </form>
       </header>
       <main>
@@ -181,7 +218,14 @@ function App() {
             }
           >
             <ul>
-              <li>{formState.hex}</li>
+              <li>
+                {formatHex({
+                  mode: "hsl",
+                  h: formState.h,
+                  l: value,
+                  s: chromaArray[index],
+                })}
+              </li>
               <li>h: {roundTo(formState.h, 1)}</li>
               <li>s: {roundTo(chromaArray[index])}</li>
               <li>l: {roundTo(value)}</li>
@@ -206,6 +250,21 @@ function App() {
 }
 
 export default App;
+
+function SliderNumberField({ className }: { className?: string }) {
+  let state = useContext(SliderStateContext)!;
+  let labelProps = useSlottedContext(LabelContext)!;
+  return (
+    <NumberField
+      className={className}
+      aria-labelledby={labelProps.id}
+      value={state.values[0]}
+      onChange={(v) => state.setThumbValue(0, v)}
+    >
+      <Input />
+    </NumberField>
+  );
+}
 
 function validateFormData(
   previousState: ColorDefinition,
@@ -240,6 +299,23 @@ function compareColorDefinitions(prev: ColorDefinition, next: ColorDefinition) {
 
 function isString(value: unknown): value is string {
   return typeof value === "string";
+}
+
+function handleHexChange(e: React.ChangeEvent<HTMLInputElement>) {
+  let value = e.target.value.toUpperCase();
+  value = value.replace(/[^0-9A-F]/g, "");
+  value = value.slice(0, 6);
+  e.target.value = value;
+}
+
+function validateHexValue(value: string) {
+  if (value.length === 1) {
+    return `${value}${value}${value}${value}${value}${value}`;
+  } else if (value.length === 3) {
+    return `${value[0]}${value[0]}${value[1]}${value[1]}${value[2]}${value[2]}`;
+  } else if (value.length === 6) {
+    return value;
+  } else return null;
 }
 
 function createLinearDistribution(
