@@ -1,0 +1,17 @@
+.input {
+  display: flex;
+  align-items: center;
+}
+
+.swatch {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  display: flex;
+  width: 2rem;
+  height: 2rem;
+  border: 1px solid rgb(0 0 0 / 0.1);
+  border-radius: 100vmax;
+  margin-right: 0.5rem;
+}

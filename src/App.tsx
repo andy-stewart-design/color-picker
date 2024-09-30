@@ -4,21 +4,11 @@ import {
   startTransition,
   useRef,
   useState,
-  useContext,
 } from "react";
 import { converter, formatHex } from "culori";
-import {
-  Label,
-  Slider,
-  SliderThumb,
-  SliderTrack,
-  Input,
-  LabelContext,
-  NumberField,
-  SliderStateContext,
-  useSlottedContext,
-} from "react-aria-components";
+import RangeSlider from "./components/Slider";
 import "./main.css";
+import HexInput from "./components/HexInput";
 
 interface ColorDefinition {
   hex: string;
@@ -127,76 +117,42 @@ function App() {
     <>
       <header>
         <form onSubmit={onSubmit} key={JSON.stringify(formState)} ref={formRef}>
-          <div className="hex-input">
-            <span
-              className="swatch"
-              style={{ backgroundColor: swatchColor }}
-            ></span>
-            <span style={{ opacity: 0.4 }}>#</span>
-            <input
-              name="hex"
-              onChange={handleHexChange}
-              onKeyDown={(e) => {
-                if (e.key !== "Enter") return;
-                const input = e.target;
-                if (!(input instanceof HTMLInputElement)) return;
-
-                e.preventDefault();
-                const nextValue = validateHexValue(input.value);
-
-                if (nextValue) {
-                  input.value = nextValue;
-                  formRef.current?.requestSubmit();
-                }
-              }}
-              defaultValue={formState.hex}
-            />
-          </div>
-          <Slider
-            className="react-aria-slider"
+          <HexInput
+            name="hex"
+            swatchColor={swatchColor}
+            defaultValue={formState.hex}
+            form={formRef}
+          />
+          <RangeSlider
+            name="hue"
+            label="Hue"
             defaultValue={formState.h}
-            minValue={0}
-            maxValue={360}
+            min={0}
+            max={360}
             step={0.01}
             onChange={(value) => updateCurrentColor("h", value)}
             onChangeEnd={() => formRef.current?.requestSubmit()}
-          >
-            <Label className="label">Hue</Label>
-            <SliderNumberField className="output" />
-            <SliderTrack className="track">
-              <SliderThumb name="hue" className="thumb" />
-            </SliderTrack>
-          </Slider>
-          <Slider
-            className="react-aria-slider"
+          />
+          <RangeSlider
+            name="saturation"
+            label="Saturation"
             defaultValue={formState.s}
-            minValue={0}
-            maxValue={1}
+            min={0}
+            max={1}
             step={0.01}
             onChange={(value) => updateCurrentColor("s", value)}
             onChangeEnd={() => formRef.current?.requestSubmit()}
-          >
-            <Label className="label">Saturation</Label>
-            <SliderNumberField className="output" />
-            <SliderTrack className="track">
-              <SliderThumb name="saturation" className="thumb" />
-            </SliderTrack>
-          </Slider>
-          <Slider
-            className="react-aria-slider"
+          />
+          <RangeSlider
+            name="lightness"
+            label="Lightness"
             defaultValue={formState.l}
-            minValue={0}
-            maxValue={1}
+            min={0}
+            max={1}
             step={0.01}
             onChange={(value) => updateCurrentColor("l", value)}
             onChangeEnd={() => formRef.current?.requestSubmit()}
-          >
-            <Label className="label">Lightness</Label>
-            <SliderNumberField className="output" />
-            <SliderTrack className="track">
-              <SliderThumb name="lightness" className="thumb" />
-            </SliderTrack>
-          </Slider>
+          />
         </form>
       </header>
       <main>
@@ -251,21 +207,6 @@ function App() {
 
 export default App;
 
-function SliderNumberField({ className }: { className?: string }) {
-  let state = useContext(SliderStateContext)!;
-  let labelProps = useSlottedContext(LabelContext)!;
-  return (
-    <NumberField
-      className={className}
-      aria-labelledby={labelProps.id}
-      value={state.values[0]}
-      onChange={(v) => state.setThumbValue(0, v)}
-    >
-      <Input />
-    </NumberField>
-  );
-}
-
 function validateFormData(
   previousState: ColorDefinition,
   formData: FormData
@@ -299,23 +240,6 @@ function compareColorDefinitions(prev: ColorDefinition, next: ColorDefinition) {
 
 function isString(value: unknown): value is string {
   return typeof value === "string";
-}
-
-function handleHexChange(e: React.ChangeEvent<HTMLInputElement>) {
-  let value = e.target.value.toUpperCase();
-  value = value.replace(/[^0-9A-F]/g, "");
-  value = value.slice(0, 6);
-  e.target.value = value;
-}
-
-function validateHexValue(value: string) {
-  if (value.length === 1) {
-    return `${value}${value}${value}${value}${value}${value}`;
-  } else if (value.length === 3) {
-    return `${value[0]}${value[0]}${value[1]}${value[1]}${value[2]}${value[2]}`;
-  } else if (value.length === 6) {
-    return value;
-  } else return null;
 }
 
 function createLinearDistribution(
