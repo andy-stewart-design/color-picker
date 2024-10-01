@@ -1,53 +1,30 @@
-import {
-  CSSProperties,
-  useActionState,
-  startTransition,
-  useRef,
-  useState,
-} from "react";
-import { converter, formatHex } from "culori";
-import RangeSlider from "./components/Slider";
+import { useActionState, useState } from "react";
+import { formatHex } from "culori";
+import ColorForm from "./components/ColorForm";
+import ColorCard from "./components/ColorCard";
+import { hsl } from "@/utils/culori";
+import { roundTo } from "@/utils/math";
+import { compareObjects } from "@/utils/object";
+import { DEFAULT_COLOR, CARD_IDS } from "@/constants";
 import "./main.css";
-import HexInput from "./components/HexInput";
 
-interface ColorDefinition {
+export interface ColorDefinition {
   hex: string;
   h: number;
   s: number;
   l: number;
 }
 
-const converterHSL = converter("hsl");
-
-function hsl(color: string) {
-  const colorHSL = converterHSL(color);
-  if (!colorHSL) throw new Error(`Invalid color: ${color}`);
-
-  const { h, s, l, mode } = colorHSL;
-  if (h === undefined) {
-    return { h: 0, s, l, mode };
-  }
-
-  return { h, s, l, mode };
-}
-
-const defaultColor = {
-  hex: "43c5ef",
-  h: roundTo(194.65116279069767, 2),
-  s: roundTo(0.8431372549019608, 2),
-  l: roundTo(0.6, 2),
-};
-
 function App() {
-  const [formState, formAction] = useActionState(handleSubmit, defaultColor);
-  const [swatchColor, setSwatchColor] = useState(`#${formState.hex}`);
-  const formRef = useRef<HTMLFormElement>(null);
+  const [currentColor, formAction] = useActionState<ColorDefinition, FormData>(
+    handleSubmit,
+    DEFAULT_COLOR
+  );
+  const [swatchColor, setSwatchColor] = useState(`#${currentColor.hex}`);
 
   function handleSubmit(previousState: ColorDefinition, formData: FormData) {
-    const nextState = validateFormData(previousState, formData);
-    const changedValues = compareColorDefinitions(previousState, nextState);
-
-    console.log("changedValues", changedValues);
+    const nextState = validateFormData(formData, previousState);
+    const changedValues = compareObjects(previousState, nextState);
 
     if ("hex" in changedValues && changedValues.hex !== undefined) {
       const nextHsl = hsl(`#${changedValues.hex}`);
@@ -81,124 +58,51 @@ function App() {
     }
   }
 
-  function onSubmit(event: React.FormEvent) {
-    event.preventDefault();
-    const form = event.target;
-    if (form instanceof HTMLFormElement) {
-      const formData = new FormData(form);
-      startTransition(() => formAction(formData));
-    }
-  }
-
-  function updateCurrentColor(key: "h" | "s" | "l", value: number) {
-    const currentHsl = {
-      h: formState.h,
-      s: formState.s,
-      l: formState.l,
-    };
-    const nextHex = formatHex({
-      ...currentHsl,
-      mode: "hsl",
-      [key]: value,
-    });
-    setSwatchColor(nextHex);
-  }
-
-  const lightnessArray = createLinearDistribution(formState.l, 11, 0.05, 0.9);
-
-  const chromaArray = createParabolicDistribution(
-    lightnessArray.range.length,
-    Math.max(0, formState.s - (formState.s / 16) * lightnessArray.keyIndex),
-    formState.s,
-    lightnessArray.keyIndex - Math.floor(lightnessArray.range.length / 2)
+  const lightnessArray = createLinearDistribution(
+    currentColor.l,
+    11,
+    0.05,
+    0.9
   );
+
+  const spectrum = lightnessArray.range.map((value, index) => {
+    const saturation = getSaturationValue(
+      index,
+      lightnessArray.range.length,
+      Math.max(
+        0,
+        currentColor.s - (currentColor.s / 16) * lightnessArray.keyIndex
+      ),
+      currentColor.s,
+      lightnessArray.keyIndex - Math.floor(lightnessArray.range.length / 2)
+    );
+
+    const HSL = { h: currentColor.h, s: saturation, l: value };
+
+    return {
+      ...HSL,
+      hex: formatHex({ mode: "hsl", ...HSL }),
+    };
+  });
 
   return (
     <>
       <header>
-        <form onSubmit={onSubmit} key={JSON.stringify(formState)} ref={formRef}>
-          <HexInput
-            name="hex"
-            swatchColor={swatchColor}
-            defaultValue={formState.hex}
-            form={formRef}
-          />
-          <RangeSlider
-            name="hue"
-            label="Hue"
-            defaultValue={formState.h}
-            min={0}
-            max={360}
-            step={0.01}
-            onChange={(value) => updateCurrentColor("h", value)}
-            onChangeEnd={() => formRef.current?.requestSubmit()}
-          />
-          <RangeSlider
-            name="saturation"
-            label="Saturation"
-            defaultValue={formState.s}
-            min={0}
-            max={1}
-            step={0.01}
-            onChange={(value) => updateCurrentColor("s", value)}
-            onChangeEnd={() => formRef.current?.requestSubmit()}
-          />
-          <RangeSlider
-            name="lightness"
-            label="Lightness"
-            defaultValue={formState.l}
-            min={0}
-            max={1}
-            step={0.01}
-            onChange={(value) => updateCurrentColor("l", value)}
-            onChangeEnd={() => formRef.current?.requestSubmit()}
-          />
-        </form>
+        <ColorForm
+          key={Object.values(currentColor).join("-")}
+          action={formAction}
+          formState={currentColor}
+          swatchColor={swatchColor}
+          setSwatchColor={setSwatchColor}
+        />
       </header>
       <main>
-        {lightnessArray.range.map((value, index) => (
-          <div
-            key={index}
-            className="color-card"
-            style={
-              {
-                backgroundColor: formatHex({
-                  mode: "hsl",
-                  h: formState.h,
-                  l: value,
-                  s: chromaArray[index],
-                }),
-                "--saturation": `${chromaArray[index] * 100}%`,
-                "--lightness": `${value * 100}%`,
-              } as CSSProperties
-            }
-          >
-            <ul>
-              <li>
-                {formatHex({
-                  mode: "hsl",
-                  h: formState.h,
-                  l: value,
-                  s: chromaArray[index],
-                })}
-              </li>
-              <li>h: {roundTo(formState.h, 1)}</li>
-              <li>s: {roundTo(chromaArray[index])}</li>
-              <li>l: {roundTo(value)}</li>
-            </ul>
-            <div className="indicators">
-              <span
-                className={`indicator lightness ${
-                  index === lightnessArray.keyIndex ? "anchor" : ""
-                }`.trim()}
-              />
-              <span
-                className={`indicator saturation ${
-                  index === lightnessArray.keyIndex ? "anchor" : ""
-                }`.trim()}
-              />
-            </div>
-          </div>
+        {spectrum.map((color, index) => (
+          <ColorCard
+            key={CARD_IDS[index]}
+            isKeyIndex={index === lightnessArray.keyIndex}
+            {...color}
+          />
         ))}
       </main>
     </>
@@ -208,8 +112,8 @@ function App() {
 export default App;
 
 function validateFormData(
-  previousState: ColorDefinition,
-  formData: FormData
+  formData: FormData,
+  previousState: ColorDefinition
 ): ColorDefinition {
   const hex = formData.get("hex");
   const hue = formData.get("hue");
@@ -222,20 +126,6 @@ function validateFormData(
     s: isString(saturation) ? Number(saturation) : previousState.s,
     l: isString(lightness) ? Number(lightness) : previousState.l,
   };
-}
-
-type ColorChange = Partial<ColorDefinition>;
-
-function compareColorDefinitions(prev: ColorDefinition, next: ColorDefinition) {
-  const changes: ColorChange = {};
-
-  (Object.keys(next) as Array<keyof ColorDefinition>).forEach((key) => {
-    if (next[key] !== prev[key]) {
-      (changes[key] as ColorDefinition[typeof key]) = next[key];
-    }
-  });
-
-  return changes;
 }
 
 function isString(value: unknown): value is string {
@@ -252,7 +142,6 @@ function createLinearDistribution(
   keyIndex: number;
 } {
   if (seed === null) {
-    // Create an ideal linear didtribution given the desired length, min and max values
     return {
       range: Array.from({ length }, (_, i) => {
         return min + (i * (max - min)) / (length - 1);
@@ -334,50 +223,63 @@ function getLinearDistributionParams(
   return { ...parameters, keyValue: seed };
 }
 
-function createParabolicDistribution(
-  arrayLength: number,
+function getSaturationValue(
+  index: number,
+  maxIndex: number,
   minValue: number = 0,
   maxValue: number = 1,
   shift: number = 0
-): number[] {
-  const output: number[] = new Array(arrayLength);
+) {
   const range = maxValue - minValue;
-
-  // Calculate the peak index (shifted)
   const peakIndex = Math.min(
-    Math.max(Math.floor((arrayLength - 1) / 2) + shift, 0),
-    arrayLength - 1
+    Math.max(Math.floor((maxIndex - 1) / 2) + shift, 0),
+    maxIndex - 1
   );
 
-  if (peakIndex === 0) {
-    return new Array(arrayLength).fill(roundTo(minValue + range, 4));
-  }
-
-  for (let i = 0; i < arrayLength; i++) {
-    let normalizedValue: number;
-
-    if (i <= peakIndex) {
-      // Linear increase to peak
-      normalizedValue = i / peakIndex;
-    } else {
-      // Linear decrease from peak
-      normalizedValue = 1 - (i - peakIndex) / (arrayLength - 1 - peakIndex);
-      normalizedValue = 1;
-    }
-
-    // Ensure normalizedValue is within [0, 1]
-    normalizedValue = Math.max(0, Math.min(1, normalizedValue));
-
-    // Scale to the desired range and round
-    output[i] = roundTo(minValue + normalizedValue * range, 4);
-  }
-
-  return output;
+  if (peakIndex === 0 || index >= peakIndex) return maxValue;
+  else return roundTo(minValue + (range * index) / peakIndex, 4);
 }
 
-function roundTo(num: number, digits = 3): number {
-  return Number(num.toFixed(digits));
-}
+// function createParabolicDistribution(
+//   arrayLength: number,
+//   minValue: number = 0,
+//   maxValue: number = 1,
+//   shift: number = 0
+// ): number[] {
+//   const output: number[] = new Array(arrayLength);
+//   const range = maxValue - minValue;
+
+//   // Calculate the peak index (shifted)
+//   const peakIndex = Math.min(
+//     Math.max(Math.floor((arrayLength - 1) / 2) + shift, 0),
+//     arrayLength - 1
+//   );
+
+//   if (peakIndex === 0) {
+//     return new Array(arrayLength).fill(roundTo(minValue + range, 4));
+//   }
+
+//   for (let i = 0; i < arrayLength; i++) {
+//     let normalizedValue: number;
+
+//     if (i <= peakIndex) {
+//       // Linear increase to peak
+//       normalizedValue = i / peakIndex;
+//     } else {
+//       // Linear decrease from peak
+//       normalizedValue = 1 - (i - peakIndex) / (arrayLength - 1 - peakIndex);
+//       normalizedValue = 1;
+//     }
+
+//     // Ensure normalizedValue is within [0, 1]
+//     normalizedValue = Math.max(0, Math.min(1, normalizedValue));
+
+//     // Scale to the desired range and round
+//     output[i] = roundTo(minValue + normalizedValue * range, 4);
+//   }
+
+//   return output;
+// }
 
 // function applyEasing(array: number[]) {
 //   const originalArray = [...array];
