@@ -1,5 +1,6 @@
 import { type CSSProperties } from "react";
-import { roundTo } from "@/utils/math";
+import clsx from "clsx";
+import s from "./style.module.css";
 
 interface Props {
   hex: string;
@@ -9,32 +10,27 @@ interface Props {
   isKeyIndex: boolean;
 }
 
-function ColorCard({ hex, h, s, l, isKeyIndex }: Props) {
+function ColorCard({ hex, s: sat, l, isKeyIndex }: Props) {
   return (
     <div
-      className="color-card"
+      className={s.card}
       style={
         {
           backgroundColor: hex,
-          "--saturation": `${s * 100}%`,
+          "--saturation": `${sat * 100}%`,
           "--lightness": `${l * 100}%`,
         } as CSSProperties
       }
     >
-      <ul>
-        <li>{hex}</li>
-        <li>h: {roundTo(h, 1)}</li>
-        <li>s: {roundTo(s)}</li>
-        <li>l: {roundTo(l)}</li>
-      </ul>
-      <div className="indicators">
+      <div className={s.hex}>
+        <button>{hex}</button>
+      </div>
+      <div className={s.indicators}>
         <span
-          className={`indicator lightness ${isKeyIndex ? "anchor" : ""}`.trim()}
+          className={clsx(s.indicator, s.lightness, isKeyIndex && s.amchor)}
         />
         <span
-          className={`indicator saturation ${
-            isKeyIndex ? "anchor" : ""
-          }`.trim()}
+          className={clsx(s.indicator, s.saturation, isKeyIndex && s.amchor)}
         />
       </div>
     </div>

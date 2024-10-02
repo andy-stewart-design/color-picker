@@ -1,0 +1,7 @@
+.form {
+  display: grid;
+  grid-auto-rows: max-content;
+  gap: 1.5rem;
+  padding: 2rem;
+  min-height: 100lvh;
+}

@@ -5,7 +5,6 @@
     "track track";
   grid-template-columns: 1fr auto;
   width: 100%;
-  max-width: 200px;
   color: black;
 
   .label {

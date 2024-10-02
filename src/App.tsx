@@ -1,4 +1,4 @@
-import { useActionState, useState } from "react";
+import { useActionState, useMemo, useState } from "react";
 import { formatHex } from "culori";
 import ColorForm from "./components/ColorForm";
 import ColorCard from "./components/ColorCard";
@@ -6,7 +6,7 @@ import { hsl } from "@/utils/culori";
 import { roundTo } from "@/utils/math";
 import { compareObjects } from "@/utils/object";
 import { DEFAULT_COLOR, CARD_IDS } from "@/constants";
-import "./main.css";
+import s from "./app.module.css";
 
 export interface ColorDefinition {
   hex: string;
@@ -58,36 +58,37 @@ function App() {
     }
   }
 
-  const lightnessArray = createLinearDistribution(
-    currentColor.l,
-    11,
-    0.05,
-    0.9
-  );
+  const lightnessArray = useMemo(() => {
+    return createLinearDistribution(currentColor.l, 11, 0.05, 0.9);
+  }, [currentColor]);
 
-  const spectrum = lightnessArray.range.map((value, index) => {
-    const saturation = getSaturationValue(
-      index,
-      lightnessArray.range.length,
-      Math.max(
-        0,
-        currentColor.s - (currentColor.s / 16) * lightnessArray.keyIndex
-      ),
-      currentColor.s,
-      lightnessArray.keyIndex - Math.floor(lightnessArray.range.length / 2)
-    );
+  const spectrum = useMemo(() => {
+    return lightnessArray.range
+      .map((value, index) => {
+        const saturation = getSaturationValue(
+          index,
+          lightnessArray.range.length,
+          Math.max(
+            0,
+            currentColor.s - (currentColor.s / 16) * lightnessArray.keyIndex
+          ),
+          currentColor.s,
+          lightnessArray.keyIndex - Math.floor(lightnessArray.range.length / 2)
+        );
 
-    const HSL = { h: currentColor.h, s: saturation, l: value };
+        const HSL = { h: currentColor.h, s: saturation, l: value };
 
-    return {
-      ...HSL,
-      hex: formatHex({ mode: "hsl", ...HSL }),
-    };
-  });
+        return {
+          ...HSL,
+          hex: formatHex({ mode: "hsl", ...HSL }),
+        };
+      })
+      .reverse();
+  }, [lightnessArray, currentColor]);
 
   return (
-    <>
-      <header>
+    <main className={s.main}>
+      <div>
         <ColorForm
           key={Object.values(currentColor).join("-")}
           action={formAction}
@@ -95,8 +96,8 @@ function App() {
           swatchColor={swatchColor}
           setSwatchColor={setSwatchColor}
         />
-      </header>
-      <main>
+      </div>
+      <section className={s.grid}>
         {spectrum.map((color, index) => (
           <ColorCard
             key={CARD_IDS[index]}
@@ -104,8 +105,8 @@ function App() {
             {...color}
           />
         ))}
-      </main>
-    </>
+      </section>
+    </main>
   );
 }
 

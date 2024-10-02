@@ -8,7 +8,7 @@ import { formatHex } from "culori";
 import HexInput from "@/components/HexInput";
 import RangeSlider from "@/components/Slider";
 import type { ColorDefinition } from "@/App";
-// import s from "./style.module.css";
+import s from "./style.module.css";
 
 interface Props {
   action: (payload: FormData) => void;
@@ -43,7 +43,7 @@ function ColorForm({ formState, action, swatchColor, setSwatchColor }: Props) {
   }
 
   return (
-    <form onSubmit={onSubmit} ref={formRef}>
+    <form className={s.form} onSubmit={onSubmit} ref={formRef}>
       <HexInput
         name="hex"
         swatchColor={swatchColor}
