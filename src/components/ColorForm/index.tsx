@@ -1,23 +1,17 @@
-import {
-  startTransition,
-  useRef,
-  type Dispatch,
-  type SetStateAction,
-} from "react";
+import { startTransition, useRef, useState } from "react";
 import { formatHex } from "culori";
 import HexInput from "@/components/HexInput";
 import RangeSlider from "@/components/Slider";
-import type { ColorDefinition } from "@/App";
+import type { ColorFormValues } from "@/App";
 import s from "./style.module.css";
 
 interface Props {
   action: (payload: FormData) => void;
-  formState: ColorDefinition;
-  swatchColor: string;
-  setSwatchColor: Dispatch<SetStateAction<string>>;
+  formState: ColorFormValues;
 }
 
-function ColorForm({ formState, action, swatchColor, setSwatchColor }: Props) {
+function ColorForm({ formState, action }: Props) {
+  const [swatchColor, setSwatchColor] = useState(`#${formState.hex}`);
   const formRef = useRef<HTMLFormElement>(null);
 
   function onSubmit(event: React.FormEvent) {
@@ -44,6 +38,19 @@ function ColorForm({ formState, action, swatchColor, setSwatchColor }: Props) {
 
   return (
     <form className={s.form} onSubmit={onSubmit} ref={formRef}>
+      <label>
+        <input
+          type="number"
+          name="numColors"
+          defaultValue={formState.numColors}
+          onKeyUp={(e) => e.key === "Enter" && formRef.current?.requestSubmit()}
+          onBlur={(e) => {
+            if (e.target.valueAsNumber !== formState.numColors) {
+              formRef.current?.requestSubmit();
+            }
+          }}
+        />
+      </label>
       <HexInput
         name="hex"
         swatchColor={swatchColor}
@@ -58,7 +65,10 @@ function ColorForm({ formState, action, swatchColor, setSwatchColor }: Props) {
         max={360}
         step={0.01}
         onChange={(value) => setSwatchColor(updateCurrentColor("h", value))}
-        onChangeEnd={() => formRef.current?.requestSubmit()}
+        onChangeEnd={(value) => {
+          formRef.current?.requestSubmit();
+          setSwatchColor(updateCurrentColor("h", value));
+        }}
       />
       <RangeSlider
         name="saturation"
@@ -68,7 +78,10 @@ function ColorForm({ formState, action, swatchColor, setSwatchColor }: Props) {
         max={1}
         step={0.01}
         onChange={(value) => setSwatchColor(updateCurrentColor("s", value))}
-        onChangeEnd={() => formRef.current?.requestSubmit()}
+        onChangeEnd={(value) => {
+          formRef.current?.requestSubmit();
+          setSwatchColor(updateCurrentColor("s", value));
+        }}
       />
       <RangeSlider
         name="lightness"
@@ -78,7 +91,10 @@ function ColorForm({ formState, action, swatchColor, setSwatchColor }: Props) {
         max={1}
         step={0.01}
         onChange={(value) => setSwatchColor(updateCurrentColor("l", value))}
-        onChangeEnd={() => formRef.current?.requestSubmit()}
+        onChangeEnd={(value) => {
+          formRef.current?.requestSubmit();
+          setSwatchColor(updateCurrentColor("l", value));
+        }}
       />
     </form>
   );

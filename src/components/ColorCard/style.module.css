@@ -2,11 +2,11 @@
   position: relative;
 
   display: flex;
-  transition: background 300ms ease-out;
+  transition: background var(--grid-transition-duration)
+    var(--grid-transition-easing);
 
   .hex {
-    min-width: 8rem;
-    padding: 1rem;
+    padding: 2ch;
 
     button {
       background: rgb(0 0 0 / 0.85);
@@ -14,13 +14,26 @@
       border-radius: 3px;
       outline: 1px solid rgb(255 255 255 / 0.25);
       color: white;
-      padding: 0.3rem 0.5rem 0.25rem;
+      padding: 0.3rem 1ch 0.25rem;
+      font-family: monospace;
+      transition: opacity var(--grid-transition-duration)
+        var(--grid-transition-easing);
+
+      .card[data-active="false"] & {
+        opacity: 0;
+      }
     }
   }
 
   .indicators {
     position: relative;
     flex: 1 0 0;
+    transition: opacity var(--grid-transition-duration)
+      var(--grid-transition-easing);
+
+    .card[data-active="false"] & {
+      opacity: 0;
+    }
   }
 
   .indicator {
@@ -45,7 +58,7 @@
       background: white;
     }
 
-    &.anchor {
+    &.keyIndex {
       outline: 8px solid rgb(255 255 255 / 0.35);
     }
   }

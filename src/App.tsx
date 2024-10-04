@@ -1,11 +1,11 @@
-import { useActionState, useMemo, useState } from "react";
+import { CSSProperties, useActionState, useMemo } from "react";
 import { formatHex } from "culori";
 import ColorForm from "./components/ColorForm";
 import ColorCard from "./components/ColorCard";
 import { hsl } from "@/utils/culori";
 import { roundTo } from "@/utils/math";
 import { compareObjects } from "@/utils/object";
-import { DEFAULT_COLOR, CARD_IDS } from "@/constants";
+import { DEFAULT_VALUES, CARD_IDS } from "@/constants";
 import s from "./app.module.css";
 
 export interface ColorDefinition {
@@ -15,52 +15,24 @@ export interface ColorDefinition {
   l: number;
 }
 
+export interface ColorFormValues extends ColorDefinition {
+  numColors: number;
+}
+
 function App() {
-  const [currentColor, formAction] = useActionState<ColorDefinition, FormData>(
+  const [formValue, formAction] = useActionState<ColorFormValues, FormData>(
     handleSubmit,
-    DEFAULT_COLOR
+    DEFAULT_VALUES
   );
-  const [swatchColor, setSwatchColor] = useState(`#${currentColor.hex}`);
-
-  function handleSubmit(previousState: ColorDefinition, formData: FormData) {
-    const nextState = validateFormData(formData, previousState);
-    const changedValues = compareObjects(previousState, nextState);
-
-    if ("hex" in changedValues && changedValues.hex !== undefined) {
-      const nextHsl = hsl(`#${changedValues.hex}`);
-      setSwatchColor(`#${changedValues.hex}`);
-      return {
-        hex: changedValues.hex.toString(),
-        h: nextHsl.h,
-        s: nextHsl.s,
-        l: nextHsl.l,
-      };
-    } else {
-      const nextH = "h" in changedValues ? nextState.h : previousState.h;
-      const nextS = "s" in changedValues ? nextState.s : previousState.s;
-      const nextL = "l" in changedValues ? nextState.l : previousState.l;
-
-      const nextHex = formatHex({
-        mode: "hsl",
-        h: nextH,
-        s: nextS,
-        l: nextL,
-      });
-
-      setSwatchColor(nextHex);
-
-      return {
-        h: nextH,
-        s: nextS,
-        l: nextL,
-        hex: nextHex.replace("#", ""),
-      };
-    }
-  }
 
   const lightnessArray = useMemo(() => {
-    return createLinearDistribution(currentColor.l, 11, 0.05, 0.9);
-  }, [currentColor]);
+    return createLinearDistribution(
+      formValue.l,
+      formValue.numColors,
+      0.05,
+      0.9
+    );
+  }, [formValue]);
 
   const spectrum = useMemo(() => {
     return lightnessArray.range
@@ -70,13 +42,13 @@ function App() {
           lightnessArray.range.length,
           Math.max(
             0,
-            currentColor.s - (currentColor.s / 16) * lightnessArray.keyIndex
+            formValue.s - (formValue.s / 16) * lightnessArray.keyIndex
           ),
-          currentColor.s,
+          formValue.s,
           lightnessArray.keyIndex - Math.floor(lightnessArray.range.length / 2)
         );
 
-        const HSL = { h: currentColor.h, s: saturation, l: value };
+        const HSL = { h: formValue.h, s: saturation, l: value };
 
         return {
           ...HSL,
@@ -84,26 +56,53 @@ function App() {
         };
       })
       .reverse();
-  }, [lightnessArray, currentColor]);
+  }, [lightnessArray, formValue]);
+
+  const activeRows = Array.from({ length: formValue.numColors }, () => "1fr");
+  const inactiveRows = Array.from(
+    { length: 23 - formValue.numColors },
+    () => "0fr"
+  );
 
   return (
     <main className={s.main}>
       <div>
         <ColorForm
-          key={Object.values(currentColor).join("-")}
+          key={Object.values(formValue).join("-")}
           action={formAction}
-          formState={currentColor}
-          swatchColor={swatchColor}
-          setSwatchColor={setSwatchColor}
+          formState={formValue}
         />
       </div>
-      <section className={s.grid}>
-        {spectrum.map((color, index) => (
-          <ColorCard
+      <section
+        className={s.grid}
+        style={
+          {
+            gridTemplateRows: [...activeRows, ...inactiveRows].join(" "),
+            "--num-colors": formValue.numColors,
+          } as CSSProperties
+        }
+      >
+        {Array.from({ length: 23 }, (_, i) => i).map((index) => (
+          <div
             key={CARD_IDS[index]}
-            isKeyIndex={index === lightnessArray.keyIndex}
-            {...color}
-          />
+            data-index={index}
+            className={s.test}
+            style={
+              {
+                display: "grid",
+                overflow: "hidden",
+                "--background": spectrum[index] ? spectrum[index].hex : "black",
+              } as CSSProperties
+            }
+            data-active={index < formValue.numColors}
+          >
+            <ColorCard
+              color={spectrum[index]}
+              isKeyIndex={
+                index === formValue.numColors - 1 - lightnessArray.keyIndex
+              }
+            />
+          </div>
         ))}
       </section>
     </main>
@@ -112,20 +111,61 @@ function App() {
 
 export default App;
 
+function handleSubmit(previousState: ColorFormValues, formData: FormData) {
+  const nextState = validateFormData(formData, previousState);
+  const changedValues = compareObjects(previousState, nextState);
+
+  console.log(previousState, nextState);
+
+  if ("hex" in changedValues && changedValues.hex !== undefined) {
+    const nextHsl = hsl(`#${changedValues.hex}`);
+    return {
+      hex: changedValues.hex.toString(),
+      h: nextHsl.h,
+      s: nextHsl.s,
+      l: nextHsl.l,
+      numColors: nextState.numColors,
+    };
+  } else {
+    const nextH = "h" in changedValues ? nextState.h : previousState.h;
+    const nextS = "s" in changedValues ? nextState.s : previousState.s;
+    const nextL = "l" in changedValues ? nextState.l : previousState.l;
+
+    const nextHex = formatHex({
+      mode: "hsl",
+      h: nextH,
+      s: nextS,
+      l: nextL,
+    });
+
+    return {
+      h: nextH,
+      s: nextS,
+      l: nextL,
+      hex: nextHex.replace("#", ""),
+      numColors: nextState.numColors,
+    };
+  }
+}
+
 function validateFormData(
   formData: FormData,
-  previousState: ColorDefinition
-): ColorDefinition {
+  previousState: ColorFormValues
+): ColorFormValues {
   const hex = formData.get("hex");
   const hue = formData.get("hue");
   const saturation = formData.get("saturation");
   const lightness = formData.get("lightness");
+  const numColors = formData.get("numColors");
 
   return {
     hex: isString(hex) ? hex : previousState.hex,
     h: isString(hue) ? Number(hue) : previousState.h,
     s: isString(saturation) ? Number(saturation) : previousState.s,
     l: isString(lightness) ? Number(lightness) : previousState.l,
+    numColors: isString(numColors)
+      ? Number(numColors)
+      : previousState.numColors,
   };
 }
 

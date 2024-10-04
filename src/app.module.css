@@ -5,7 +5,20 @@
 
 .grid {
   display: grid;
-  grid-template-rows: repeat(11, 1fr);
+  /* grid-template-rows: repeat(var(--num-colors), 1fr) repeat(20, 0fr); */
   overflow: clip;
   min-height: 100lvh;
+  transition: grid-template-rows var(--grid-transition-duration)
+    var(--grid-transition-easing);
+}
+
+.test {
+  --bg: black;
+  background: var(--bg);
+  transition: background var(--grid-transition-duration)
+    var(--grid-transition-easing);
+
+  &[data-active="true"] {
+    --bg: var(--background);
+  }
 }

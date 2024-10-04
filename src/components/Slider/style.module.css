@@ -1,29 +1,37 @@
 .slider {
   display: grid;
-  grid-template-areas:
-    "label output"
-    "track track";
-  grid-template-columns: 1fr auto;
+  row-gap: 0.5rem;
   width: 100%;
   color: black;
 
+  .topRow {
+    display: flex;
+    align-items: baseline;
+    font-size: 0.875rem;
+  }
+
   .label {
-    grid-area: label;
+    flex: 1 0 0;
   }
 
   .output {
-    grid-area: output;
-    max-width: 5ch;
+    flex: 0 0 6ch;
+    max-width: 6ch;
 
     input {
       max-width: inherit;
       text-align: center;
       font-variant-numeric: tabular-nums;
+      background: rgb(0 0 0 / 0.05);
+      border: none;
+      padding-block-start: 0.25rem;
+      padding-block-end: 0.2rem;
+      border-radius: 3px;
     }
   }
 
   .track {
-    grid-area: track;
+    /* grid-area: track; */
     position: relative;
     height: 1.5rem;
 

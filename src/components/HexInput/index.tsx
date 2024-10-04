@@ -10,25 +10,29 @@ interface Props {
 
 function HexInput(props: Props) {
   return (
-    <div className={s.input}>
-      <span
-        className={s.swatch}
-        style={{ backgroundColor: props.swatchColor }}
-      ></span>
-      <span style={{ opacity: 0.4 }}>#</span>
+    <div className={s.wrapper}>
       <input
+        className={s.input}
         name={props.name}
         onChange={handleHexChange}
         onKeyDown={(e) => handleKeyDown(e, props.form.current)}
         defaultValue={props.defaultValue}
       />
+      {/* <div className={s.swatchHex}>{props.swatchColor.replace("#", "")}</div> */}
+      <span
+        className={s.swatch}
+        style={{ backgroundColor: props.swatchColor }}
+      ></span>
+      <span className={s.hex} style={{ opacity: 0.4 }}>
+        #
+      </span>
     </div>
   );
 }
 
 function handleHexChange(e: ChangeEvent<HTMLInputElement>) {
-  let value = e.target.value.toUpperCase();
-  value = value.replace(/[^0-9A-F]/g, "");
+  let value = e.target.value.toLocaleLowerCase();
+  value = value.replace(/[^0-9A-Fa-f]/g, "");
   value = value.slice(0, 6);
   e.target.value = value;
 }

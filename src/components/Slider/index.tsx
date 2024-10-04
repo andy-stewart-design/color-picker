@@ -34,8 +34,10 @@ function Slider({ name, label, ...props }: Props) {
       onChange={props.onChange}
       onChangeEnd={props.onChangeEnd}
     >
-      <Label className={s.label}>{label}</Label>
-      <SliderNumberField className={s.output} />
+      <div className={s.topRow}>
+        <Label className={s.label}>{label}</Label>
+        <SliderNumberField className={s.output} />
+      </div>
       <SliderTrack className={s.track}>
         <SliderThumb name={name} className={s.thumb} />
       </SliderTrack>
@@ -44,8 +46,11 @@ function Slider({ name, label, ...props }: Props) {
 }
 
 function SliderNumberField({ className }: { className?: string }) {
-  let state = useContext(SliderStateContext)!;
-  let labelProps = useSlottedContext(LabelContext)!;
+  const state = useContext(SliderStateContext);
+  const labelProps = useSlottedContext(LabelContext);
+
+  if (!labelProps) return null;
+
   return (
     <NumberField
       className={className}

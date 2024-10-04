@@ -1,21 +1,67 @@
-.input {
+.wrapper {
+  position: relative;
   display: flex;
   align-items: center;
-
-  input {
-    flex: 1 0 0;
-  }
+  font-size: 0.875rem;
 }
 
 .swatch {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+  position: absolute;
+  top: 0.375rem;
+  left: 0.375rem;
 
   display: flex;
-  width: 2rem;
-  height: 2rem;
+
+  width: 1.75rem;
+  height: 1.75rem;
   border: 1px solid rgb(0 0 0 / 0.1);
   border-radius: 100vmax;
   margin-right: 0.5rem;
+  pointer-events: none;
+}
+
+/* .swatchHex {
+  position: absolute;
+  top: 0.5rem;
+  left: 0.75rem;
+  bottom: 0.5rem;
+  right: 0.75rem;
+
+  display: flex;
+  align-items: center;
+  padding-inline-start: calc(2.35rem + 1px);
+  padding-block-start: 1px;
+  background: white;
+
+  font-size: inherit;
+  opacity: 0;
+  pointer-events: none;
+  transition-delay: 100ms;
+
+  body:has(div[data-dragging="true"]) & {
+    opacity: 1;
+  }
+} */
+
+.hex {
+  position: absolute;
+  top: 0;
+  left: 2.5rem;
+  height: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-block-end: 1px;
+  font-size: 0.875rem;
+
+  pointer-events: none;
+}
+
+.input {
+  flex: 1 0 0;
+  height: 2.5rem;
+  padding-inline-start: 3.1rem;
+  border: 1px solid rgb(0 0 0 / 0.2);
+  border-radius: 100vmax;
 }
