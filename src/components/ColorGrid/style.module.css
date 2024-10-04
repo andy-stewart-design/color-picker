@@ -1,0 +1,21 @@
+.grid {
+  --grid-transition-duration: 500ms;
+  --grid-transition-easing: cubic-bezier(0.33, 1, 0.68, 1);
+
+  display: grid;
+  overflow: clip;
+  min-height: 100lvh;
+  transition: grid-template-rows var(--grid-transition-duration)
+    var(--grid-transition-easing);
+}
+
+.cardWrapper {
+  --bg: black;
+  background: var(--bg);
+  transition: background var(--grid-transition-duration)
+    var(--grid-transition-easing);
+
+  &[data-active="true"] {
+    --bg: var(--background);
+  }
+}

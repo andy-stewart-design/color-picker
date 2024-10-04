@@ -1,6 +1,4 @@
 :where(:root) {
-  --grid-transition-duration: 500ms;
-  --grid-transition-easing: cubic-bezier(0.33, 1, 0.68, 1);
   /* Prevent font size inflation */
   -moz-text-size-adjust: none;
   -webkit-text-size-adjust: none;

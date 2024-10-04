@@ -1,12 +1,12 @@
-import { CSSProperties, useActionState, useMemo } from "react";
+import { useActionState, useMemo } from "react";
 import { formatHex } from "culori";
 import ColorForm from "./components/ColorForm";
-import ColorCard from "./components/ColorCard";
 import { hsl } from "@/utils/culori";
 import { roundTo } from "@/utils/math";
 import { compareObjects } from "@/utils/object";
-import { DEFAULT_VALUES, CARD_IDS } from "@/constants";
+import { DEFAULT_VALUES } from "@/constants";
 import s from "./app.module.css";
+import ColorGrid from "./components/ColorGrid";
 
 export interface ColorDefinition {
   hex: string;
@@ -58,12 +58,6 @@ function App() {
       .reverse();
   }, [lightnessArray, formValue]);
 
-  const activeRows = Array.from({ length: formValue.numColors }, () => "1fr");
-  const inactiveRows = Array.from(
-    { length: 23 - formValue.numColors },
-    () => "0fr"
-  );
-
   return (
     <main className={s.main}>
       <div>
@@ -73,38 +67,11 @@ function App() {
           formState={formValue}
         />
       </div>
-      <section
-        className={s.grid}
-        style={
-          {
-            gridTemplateRows: [...activeRows, ...inactiveRows].join(" "),
-            "--num-colors": formValue.numColors,
-          } as CSSProperties
-        }
-      >
-        {Array.from({ length: 23 }, (_, i) => i).map((index) => (
-          <div
-            key={CARD_IDS[index]}
-            data-index={index}
-            className={s.test}
-            style={
-              {
-                display: "grid",
-                overflow: "hidden",
-                "--background": spectrum[index] ? spectrum[index].hex : "black",
-              } as CSSProperties
-            }
-            data-active={index < formValue.numColors}
-          >
-            <ColorCard
-              color={spectrum[index]}
-              isKeyIndex={
-                index === formValue.numColors - 1 - lightnessArray.keyIndex
-              }
-            />
-          </div>
-        ))}
-      </section>
+      <ColorGrid
+        colors={spectrum}
+        numColors={formValue.numColors}
+        keyIndex={lightnessArray.keyIndex}
+      />
     </main>
   );
 }
