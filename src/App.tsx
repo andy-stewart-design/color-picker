@@ -7,6 +7,7 @@ import { compareObjects } from "@/utils/object";
 import { DEFAULT_VALUES } from "@/constants";
 import s from "./app.module.css";
 import ColorGrid from "./components/ColorGrid";
+import Providers from "./components/Providers";
 
 export interface ColorDefinition {
   hex: string;
@@ -60,18 +61,20 @@ function App() {
 
   return (
     <main className={s.main}>
-      <div>
-        <ColorForm
-          key={Object.values(formValue).join("-")}
-          action={formAction}
-          formState={formValue}
+      <Providers>
+        <div>
+          <ColorForm
+            key={Object.values(formValue).join("-")}
+            action={formAction}
+            formState={formValue}
+          />
+        </div>
+        <ColorGrid
+          colors={spectrum}
+          numColors={formValue.numColors}
+          keyIndex={lightnessArray.keyIndex}
         />
-      </div>
-      <ColorGrid
-        colors={spectrum}
-        numColors={formValue.numColors}
-        keyIndex={lightnessArray.keyIndex}
-      />
+      </Providers>
     </main>
   );
 }
@@ -82,12 +85,12 @@ function handleSubmit(previousState: ColorFormValues, formData: FormData) {
   const nextState = validateFormData(formData, previousState);
   const changedValues = compareObjects(previousState, nextState);
 
-  console.log(previousState, nextState);
-
-  if ("hex" in changedValues && changedValues.hex !== undefined) {
-    const nextHsl = hsl(`#${changedValues.hex}`);
+  if ("numColors" in changedValues) {
+    return nextState;
+  } else if ("hex" in changedValues) {
+    const nextHsl = hsl(`#${nextState.hex}`);
     return {
-      hex: changedValues.hex.toString(),
+      hex: nextState.hex,
       h: nextHsl.h,
       s: nextHsl.s,
       l: nextHsl.l,

@@ -1,5 +1,6 @@
 import { type KeyboardEvent, type ChangeEvent, type RefObject } from "react";
 import s from "./style.module.css";
+import { useActiveInputContext } from "../Providers/ActiveInput";
 
 interface Props {
   name: string;
@@ -9,16 +10,19 @@ interface Props {
 }
 
 function HexInput(props: Props) {
+  const activeInput = useActiveInputContext();
+
   return (
     <div className={s.wrapper}>
       <input
         className={s.input}
         name={props.name}
         onChange={handleHexChange}
-        onKeyDown={(e) => handleKeyDown(e, props.form.current)}
+        onKeyDown={(e) => handleKeyDown(e, props.form.current, activeInput)}
         defaultValue={props.defaultValue}
+        spellCheck={false}
+        autoFocus={activeInput.current === "hex" ? true : undefined}
       />
-      {/* <div className={s.swatchHex}>{props.swatchColor.replace("#", "")}</div> */}
       <span
         className={s.swatch}
         style={{ backgroundColor: props.swatchColor }}
@@ -39,7 +43,8 @@ function handleHexChange(e: ChangeEvent<HTMLInputElement>) {
 
 function handleKeyDown(
   e: KeyboardEvent<HTMLInputElement>,
-  form: HTMLFormElement | null
+  form: HTMLFormElement | null,
+  activeInput: RefObject<string>
 ) {
   if (e.key !== "Enter") return;
   const input = e.target;
@@ -50,6 +55,7 @@ function handleKeyDown(
 
   if (nextValue) {
     input.value = nextValue;
+    activeInput.current = "hex";
     form?.requestSubmit();
   }
 }

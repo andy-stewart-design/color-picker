@@ -1,6 +1,6 @@
+import { useEffect, useState, type CSSProperties } from "react";
 import ColorCard from "@/components/ColorCard";
 import { CARD_IDS } from "@/constants";
-import type { CSSProperties } from "react";
 import type { ColorDefinition } from "@/App";
 import s from "./style.module.css";
 
@@ -11,8 +11,23 @@ interface Props {
 }
 
 function ColorGrid({ colors, numColors, keyIndex }: Props) {
+  const [showIndicators, setShowIndicators] = useState(false);
   const activeRows = Array.from({ length: numColors }, () => "1fr");
   const inactiveRows = Array.from({ length: 23 - numColors }, () => "0fr");
+
+  useEffect(() => {
+    function handleKeydown(e: KeyboardEvent) {
+      if (e.metaKey && e.shiftKey && e.key === "g") {
+        setShowIndicators((prev) => !prev);
+      }
+    }
+
+    window.addEventListener("keydown", handleKeydown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeydown);
+    };
+  }, []);
 
   return (
     <section
@@ -41,6 +56,7 @@ function ColorGrid({ colors, numColors, keyIndex }: Props) {
           <ColorCard
             color={colors[index]}
             isKeyIndex={index === numColors - 1 - keyIndex}
+            showIndicator={showIndicators}
           />
         </div>
       ))}

@@ -1,5 +1,3 @@
-"use client";
-
 import clsx from "clsx";
 import type { ColorDefinition } from "@/App";
 import s from "./style.module.css";
@@ -7,11 +5,10 @@ import s from "./style.module.css";
 interface Props {
   color: ColorDefinition | undefined;
   isKeyIndex: boolean;
+  showIndicator?: boolean;
 }
 
-function ColorCard({ color, isKeyIndex }: Props) {
-  const showIndicators = false;
-
+function ColorCard({ color, isKeyIndex, showIndicator }: Props) {
   const style = color
     ? {
         backgroundColor: color.hex,
@@ -29,7 +26,7 @@ function ColorCard({ color, isKeyIndex }: Props) {
       <div className={s.hex}>
         <button>{color ? color.hex : "#000000"}</button>
       </div>
-      {showIndicators && (
+      {showIndicator && (
         <div className={s.indicators}>
           <span
             className={clsx(s.indicator, s.lightness, isKeyIndex && s.keyIndex)}

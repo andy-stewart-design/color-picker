@@ -1,7 +1,14 @@
-import { startTransition, useRef, useState } from "react";
+import {
+  startTransition,
+  useRef,
+  useState,
+  KeyboardEvent,
+  FocusEvent,
+} from "react";
 import { formatHex } from "culori";
 import HexInput from "@/components/HexInput";
-import RangeSlider from "@/components/Slider";
+import RangeSlider from "@/components/RangeSlider";
+import { useActiveInputContext } from "@/components/Providers/ActiveInput";
 import type { ColorFormValues } from "@/App";
 import s from "./style.module.css";
 
@@ -13,6 +20,7 @@ interface Props {
 function ColorForm({ formState, action }: Props) {
   const [swatchColor, setSwatchColor] = useState(`#${formState.hex}`);
   const formRef = useRef<HTMLFormElement>(null);
+  const activeInput = useActiveInputContext();
 
   function onSubmit(event: React.FormEvent) {
     event.preventDefault();
@@ -20,6 +28,17 @@ function ColorForm({ formState, action }: Props) {
     if (form instanceof HTMLFormElement) {
       const formData = new FormData(form);
       startTransition(() => action(formData));
+    }
+  }
+
+  function requestSubmit(
+    e: FocusEvent<HTMLInputElement> | KeyboardEvent<HTMLInputElement>
+  ) {
+    const target = e.target;
+    if (!(target instanceof HTMLInputElement)) return;
+    if (target.valueAsNumber !== formState.numColors) {
+      activeInput.current = "numColors";
+      formRef.current?.requestSubmit();
     }
   }
 
@@ -43,12 +62,9 @@ function ColorForm({ formState, action }: Props) {
           type="number"
           name="numColors"
           defaultValue={formState.numColors}
-          onKeyUp={(e) => e.key === "Enter" && formRef.current?.requestSubmit()}
-          onBlur={(e) => {
-            if (e.target.valueAsNumber !== formState.numColors) {
-              formRef.current?.requestSubmit();
-            }
-          }}
+          onKeyUp={(e) => e.key === "Enter" && requestSubmit(e)}
+          onBlur={requestSubmit}
+          autoFocus={activeInput.current === "numColors" ? true : undefined}
         />
       </label>
       <HexInput
