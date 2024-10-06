@@ -7,7 +7,7 @@ import {
 } from "react";
 
 interface ActiveInputProps {
-  activeInput?: RefObject<string>;
+  activeInput?: RefObject<string | null>;
 }
 
 const ActiveInputContext = createContext<ActiveInputProps>({});

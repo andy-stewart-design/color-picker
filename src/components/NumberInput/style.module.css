@@ -1,0 +1,43 @@
+.label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.875rem;
+}
+
+.group {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: rgb(0 0 0 / 0.05);
+  border: none;
+  border-radius: 3px;
+  padding-inline: 0.25rem;
+}
+
+.input {
+  max-width: 8ch;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  padding-block-start: 0.5rem;
+  padding-block-end: 0.45rem;
+  background: transparent;
+  border: none;
+}
+
+.button {
+  position: absolute;
+  top: 0;
+  background: transparent;
+  border: none;
+  width: 3ch;
+  height: 100%;
+
+  &.dec {
+    left: 0;
+  }
+
+  &.inc {
+    right: 0;
+  }
+}

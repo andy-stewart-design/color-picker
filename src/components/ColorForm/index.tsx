@@ -1,16 +1,10 @@
-import {
-  startTransition,
-  useRef,
-  useState,
-  KeyboardEvent,
-  FocusEvent,
-} from "react";
+import { startTransition, useRef, useState } from "react";
 import { formatHex } from "culori";
 import HexInput from "@/components/HexInput";
 import RangeSlider from "@/components/RangeSlider";
-import { useActiveInputContext } from "@/components/Providers/ActiveInput";
 import type { ColorFormValues } from "@/App";
 import s from "./style.module.css";
+import NumberInput from "../NumberInput";
 
 interface Props {
   action: (payload: FormData) => void;
@@ -20,7 +14,6 @@ interface Props {
 function ColorForm({ formState, action }: Props) {
   const [swatchColor, setSwatchColor] = useState(`#${formState.hex}`);
   const formRef = useRef<HTMLFormElement>(null);
-  const activeInput = useActiveInputContext();
 
   function onSubmit(event: React.FormEvent) {
     event.preventDefault();
@@ -28,17 +21,6 @@ function ColorForm({ formState, action }: Props) {
     if (form instanceof HTMLFormElement) {
       const formData = new FormData(form);
       startTransition(() => action(formData));
-    }
-  }
-
-  function requestSubmit(
-    e: FocusEvent<HTMLInputElement> | KeyboardEvent<HTMLInputElement>
-  ) {
-    const target = e.target;
-    if (!(target instanceof HTMLInputElement)) return;
-    if (target.valueAsNumber !== formState.numColors) {
-      activeInput.current = "numColors";
-      formRef.current?.requestSubmit();
     }
   }
 
@@ -57,16 +39,15 @@ function ColorForm({ formState, action }: Props) {
 
   return (
     <form className={s.form} onSubmit={onSubmit} ref={formRef}>
-      <label>
-        <input
-          type="number"
-          name="numColors"
-          defaultValue={formState.numColors}
-          onKeyUp={(e) => e.key === "Enter" && requestSubmit(e)}
-          onBlur={requestSubmit}
-          autoFocus={activeInput.current === "numColors" ? true : undefined}
-        />
-      </label>
+      <NumberInput
+        name="numColors"
+        defaultValue={formState.numColors}
+        min={3}
+        max={23}
+        formRef={formRef}
+      >
+        Palette Size
+      </NumberInput>
       <HexInput
         name="hex"
         swatchColor={swatchColor}
