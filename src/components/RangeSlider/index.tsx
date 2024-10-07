@@ -69,7 +69,7 @@ function Slider({ name, label, formRef, ...props }: Props) {
         <Label className={s.label}>{label}</Label>
         <SliderNumberField className={s.output} />
       </div>
-      <StyledSliderTrack max={props.max}>
+      <StyledSliderTrack>
         <SliderThumb
           name={name}
           className={s.thumb}
@@ -99,13 +99,7 @@ function SliderNumberField({ className }: { className?: string }) {
   );
 }
 
-function StyledSliderTrack({
-  max,
-  children,
-}: {
-  max: number;
-  children: ReactNode;
-}) {
+function StyledSliderTrack({ children }: { children: ReactNode }) {
   const state = useContext(SliderStateContext);
 
   return (
@@ -113,7 +107,9 @@ function StyledSliderTrack({
       className={s.track}
       style={
         {
-          "--progress": `${(state.getThumbValue(0) / max) * 100}%`,
+          "--progress": `${
+            (state.getThumbValue(0) / state.getThumbMaxValue(0)) * 100
+          }%`,
         } as CSSProperties
       }
     >
