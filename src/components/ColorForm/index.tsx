@@ -2,9 +2,9 @@ import { startTransition, useRef, useState } from "react";
 import { formatHex } from "culori";
 import HexInput from "@/components/HexInput";
 import RangeSlider from "@/components/RangeSlider";
+import NumberInput from "@/components/NumberInput";
 import type { ColorFormValues } from "@/App";
 import s from "./style.module.css";
-import NumberInput from "../NumberInput";
 
 interface Props {
   action: (payload: FormData) => void;
@@ -50,9 +50,9 @@ function ColorForm({ formState, action }: Props) {
       </NumberInput>
       <HexInput
         name="hex"
-        swatchColor={swatchColor}
         defaultValue={formState.hex}
-        form={formRef}
+        swatchColor={swatchColor}
+        formRef={formRef}
       />
       <RangeSlider
         name="hue"
@@ -66,6 +66,7 @@ function ColorForm({ formState, action }: Props) {
           formRef.current?.requestSubmit();
           setSwatchColor(updateCurrentColor("h", value));
         }}
+        formRef={formRef}
       />
       <RangeSlider
         name="saturation"
@@ -79,6 +80,7 @@ function ColorForm({ formState, action }: Props) {
           formRef.current?.requestSubmit();
           setSwatchColor(updateCurrentColor("s", value));
         }}
+        formRef={formRef}
       />
       <RangeSlider
         name="lightness"
@@ -92,6 +94,7 @@ function ColorForm({ formState, action }: Props) {
           formRef.current?.requestSubmit();
           setSwatchColor(updateCurrentColor("l", value));
         }}
+        formRef={formRef}
       />
     </form>
   );

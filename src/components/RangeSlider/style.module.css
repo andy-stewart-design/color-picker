@@ -45,6 +45,12 @@
       height: 0.25rem;
       translate: 0 -50%;
       background: grey;
+      background: linear-gradient(
+        to right,
+        var(--color-primary-500, red) var(--progress),
+        grey var(--progress),
+        grey 100%
+      );
       border-radius: 0.25rem;
     }
   }
@@ -63,7 +69,7 @@
     }
 
     &[data-focus-visible] {
-      outline: 2px solid black;
+      outline: 2px solid rgb(0, 95, 204);
     }
   }
 }

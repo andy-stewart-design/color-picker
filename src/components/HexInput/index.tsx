@@ -6,7 +6,7 @@ interface Props {
   name: string;
   defaultValue: string;
   swatchColor: string;
-  form: RefObject<HTMLFormElement | null>;
+  formRef: RefObject<HTMLFormElement | null>;
 }
 
 function HexInput(props: Props) {
@@ -18,7 +18,7 @@ function HexInput(props: Props) {
         className={s.input}
         name={props.name}
         onChange={handleHexChange}
-        onKeyDown={(e) => handleKeyDown(e, props.form.current, activeInput)}
+        onKeyDown={(e) => handleKeyDown(e, props.formRef.current, activeInput)}
         defaultValue={props.defaultValue}
         spellCheck={false}
         autoFocus={activeInput.current === "hex" ? true : undefined}
@@ -44,7 +44,7 @@ function handleHexChange(e: ChangeEvent<HTMLInputElement>) {
 function handleKeyDown(
   e: KeyboardEvent<HTMLInputElement>,
   form: HTMLFormElement | null,
-  activeInput: RefObject<string>
+  activeInput: RefObject<string | null>
 ) {
   if (e.key !== "Enter") return;
   const input = e.target;

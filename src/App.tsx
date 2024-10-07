@@ -1,4 +1,4 @@
-import { useActionState, useMemo } from "react";
+import { CSSProperties, useActionState, useMemo } from "react";
 import { formatHex } from "culori";
 import ColorForm from "./components/ColorForm";
 import { hsl } from "@/utils/culori";
@@ -60,7 +60,19 @@ function App() {
   }, [lightnessArray, formValue]);
 
   return (
-    <main className={s.main}>
+    <main
+      className={s.main}
+      style={
+        {
+          "--color-primary-500": formatHex({
+            mode: "hsl",
+            h: formValue.h,
+            s: formValue.s,
+            l: 0.5,
+          }),
+        } as CSSProperties
+      }
+    >
       <Providers>
         <div>
           <ColorForm
