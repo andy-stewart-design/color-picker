@@ -67,7 +67,7 @@ function App() {
       <Providers>
         <div>
           <ColorForm
-            key={Object.values(formValue).join("-")}
+            // key={Object.values(formValue).join("-")}
             action={formAction}
             formState={formValue}
           />
@@ -98,6 +98,8 @@ function formatCSSVariables(h: number, s: number) {
 function handleSubmit(previousState: ColorFormValues, formData: FormData) {
   const nextState = validateFormData(formData, previousState);
   const changedValues = compareObjects(previousState, nextState);
+
+  console.log(nextState);
 
   if ("numColors" in changedValues) {
     return nextState;
