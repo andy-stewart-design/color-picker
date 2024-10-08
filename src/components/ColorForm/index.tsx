@@ -55,6 +55,7 @@ function ColorForm({ formState, action }: Props) {
         formRef={formRef}
       />
       <RangeSlider
+        variant="hue"
         name="hue"
         label="Hue"
         defaultValue={formState.h}
@@ -69,6 +70,7 @@ function ColorForm({ formState, action }: Props) {
         formRef={formRef}
       />
       <RangeSlider
+        variant="saturation"
         name="saturation"
         label="Saturation"
         defaultValue={formState.s}
@@ -83,6 +85,7 @@ function ColorForm({ formState, action }: Props) {
         formRef={formRef}
       />
       <RangeSlider
+        variant="lightness"
         name="lightness"
         label="Lightness"
         defaultValue={formState.l}

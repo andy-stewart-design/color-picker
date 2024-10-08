@@ -20,6 +20,7 @@ import { useActiveInputContext } from "@/components/Providers/ActiveInput";
 import s from "./style.module.css";
 
 type Props = {
+  variant?: "default" | "hue" | "saturation" | "lightness";
   name: string;
   label: string;
   defaultValue: number;
@@ -31,7 +32,7 @@ type Props = {
   formRef: RefObject<HTMLFormElement | null>;
 };
 
-function Slider({ name, label, formRef, ...props }: Props) {
+function Slider({ variant, name, label, formRef, ...props }: Props) {
   const activeInput = useActiveInputContext();
 
   function handleChange(value: number) {
@@ -59,6 +60,7 @@ function Slider({ name, label, formRef, ...props }: Props) {
       step={props.step}
       onChange={handleChange}
       onChangeEnd={handleChangeEnd}
+      data-variant={variant ?? "default"}
       style={
         {
           "--progress": `${(props.defaultValue / props.max) * 100}%`,
@@ -69,14 +71,16 @@ function Slider({ name, label, formRef, ...props }: Props) {
         <Label className={s.label}>{label}</Label>
         <SliderNumberField className={s.output} />
       </div>
-      <StyledSliderTrack>
-        <SliderThumb
-          name={name}
-          className={s.thumb}
-          onKeyUp={handleKeyUp}
-          autoFocus={activeInput.current === name ? true : undefined}
-        />
-      </StyledSliderTrack>
+      <div className={s.trackWrapper}>
+        <StyledSliderTrack>
+          <SliderThumb
+            name={name}
+            className={s.thumb}
+            onKeyUp={handleKeyUp}
+            autoFocus={activeInput.current === name ? true : undefined}
+          />
+        </StyledSliderTrack>
+      </div>
     </SliderGroup>
   );
 }

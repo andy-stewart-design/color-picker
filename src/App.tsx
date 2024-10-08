@@ -62,16 +62,7 @@ function App() {
   return (
     <main
       className={s.main}
-      style={
-        {
-          "--color-primary-500": formatHex({
-            mode: "hsl",
-            h: formValue.h,
-            s: formValue.s,
-            l: 0.5,
-          }),
-        } as CSSProperties
-      }
+      style={formatCSSVariables(formValue.h, formValue.s)}
     >
       <Providers>
         <div>
@@ -92,6 +83,17 @@ function App() {
 }
 
 export default App;
+
+function formatCSSVariables(h: number, s: number) {
+  const mode = "hsl";
+  return {
+    "--color-primary-100": formatHex({ mode, h, s, l: 0.9 }),
+    "--color-primary-500": formatHex({ mode, h, s, l: 0.5 }),
+    "--color-primary-900": formatHex({ mode, h, s, l: 0.1 }),
+    "--color-primary-saturated": formatHex({ mode, h, s: 0.9, l: 0.5 }),
+    "--color-primary-desaturated": formatHex({ mode, h, s: 0.1, l: 0.5 }),
+  } as CSSProperties;
+}
 
 function handleSubmit(previousState: ColorFormValues, formData: FormData) {
   const nextState = validateFormData(formData, previousState);
