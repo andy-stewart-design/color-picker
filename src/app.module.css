@@ -1,6 +1,6 @@
 .main {
   display: grid;
-  grid-template-columns: 240px 1fr;
+  grid-template-columns: 256px 1fr;
 
   @media (width >= 560px) {
     grid-template-columns: 320px 1fr;
