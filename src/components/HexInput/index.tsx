@@ -1,36 +1,70 @@
-import { type KeyboardEvent, type ChangeEvent, type RefObject } from "react";
+import type {
+  KeyboardEvent,
+  ChangeEvent,
+  RefObject,
+  ReactNode,
+  Dispatch,
+  SetStateAction,
+} from "react";
 import s from "./style.module.css";
 import { useActiveInputContext } from "../Providers/ActiveInput";
 
-interface Props {
-  name: string;
-  defaultValue: string;
-  swatchColor: string;
-  formRef: RefObject<HTMLFormElement | null>;
+interface HexInputWrapperProps {
+  children: ReactNode;
 }
 
-function HexInput(props: Props) {
-  const activeInput = useActiveInputContext();
+interface HexInputProps {
+  name: string;
+  defaultValue: string;
+  formRef: RefObject<HTMLFormElement | null>;
+  setSwatchColor: Dispatch<SetStateAction<string>>;
+}
 
+function HexInputWrapper({ children }: HexInputWrapperProps) {
   return (
     <div className={s.wrapper}>
-      <input
-        className={s.input}
-        name={props.name}
-        onChange={handleHexChange}
-        onKeyDown={(e) => handleKeyDown(e, props.formRef.current, activeInput)}
-        defaultValue={props.defaultValue}
-        spellCheck={false}
-        autoFocus={activeInput.current === "hex" ? true : undefined}
-      />
-      <span
-        className={s.swatch}
-        style={{ backgroundColor: props.swatchColor }}
-      ></span>
+      {children}
       <span className={s.hex} style={{ opacity: 0.4 }}>
         #
       </span>
     </div>
+  );
+}
+
+function HexInput({
+  name,
+  formRef,
+  defaultValue,
+  setSwatchColor,
+}: HexInputProps) {
+  const activeInput = useActiveInputContext();
+
+  function handleKeyDown(e: KeyboardEvent<HTMLInputElement>) {
+    if (e.key !== "Enter") return;
+    const input = e.target;
+    if (!(input instanceof HTMLInputElement)) return;
+
+    e.preventDefault();
+    const nextValue = validateHexValue(input.value);
+
+    if (nextValue) {
+      input.value = nextValue;
+      activeInput.current = "hex";
+      setSwatchColor(`#${nextValue}`);
+      formRef.current?.requestSubmit();
+    }
+  }
+
+  return (
+    <input
+      className={s.input}
+      name={name}
+      onChange={handleHexChange}
+      onKeyDown={handleKeyDown}
+      defaultValue={defaultValue}
+      spellCheck={false}
+      autoFocus={activeInput.current === "hex" ? true : undefined}
+    />
   );
 }
 
@@ -39,25 +73,6 @@ function handleHexChange(e: ChangeEvent<HTMLInputElement>) {
   value = value.replace(/[^0-9A-Fa-f]/g, "");
   value = value.slice(0, 6);
   e.target.value = value;
-}
-
-function handleKeyDown(
-  e: KeyboardEvent<HTMLInputElement>,
-  form: HTMLFormElement | null,
-  activeInput: RefObject<string | null>
-) {
-  if (e.key !== "Enter") return;
-  const input = e.target;
-  if (!(input instanceof HTMLInputElement)) return;
-
-  e.preventDefault();
-  const nextValue = validateHexValue(input.value);
-
-  if (nextValue) {
-    input.value = nextValue;
-    activeInput.current = "hex";
-    form?.requestSubmit();
-  }
 }
 
 function validateHexValue(value: string) {
@@ -71,3 +86,4 @@ function validateHexValue(value: string) {
 }
 
 export default HexInput;
+export { HexInput, HexInputWrapper };

@@ -7,40 +7,96 @@ import {
   type SetStateAction,
 } from "react";
 
-interface HSLTemporaryStateProps {
+interface HSLContextProps {
   hue?: number;
   setHue?: Dispatch<SetStateAction<number>>;
+  saturation?: number;
+  setSaturation?: Dispatch<SetStateAction<number>>;
+  lightness?: number;
+  setLightness?: Dispatch<SetStateAction<number>>;
 }
 
-const HSLTemporaryStateContext = createContext<HSLTemporaryStateProps>({});
+const HSLContext = createContext<HSLContextProps>({});
 
-interface ProviderProps {
+interface HSLProviderProps {
   children: ReactNode;
   defaultValues: {
-    hue: number;
+    h: number;
+    s: number;
+    l: number;
   };
 }
 
-function HSLProvider({ children, defaultValues }: ProviderProps) {
-  const [hue, setHue] = useState(defaultValues.hue);
+function HSLProvider({ children, defaultValues }: HSLProviderProps) {
+  const [previousSystemValue, setPreviousSystemValues] =
+    useState(defaultValues);
+  const [hue, setHue] = useState(defaultValues.h);
+  const [saturation, setSaturation] = useState(defaultValues.s);
+  const [lightness, setLightness] = useState(defaultValues.l);
+
+  // console.log("defaultValues match", defaultValues === previousSystemValue);
+
+  if (defaultValues !== previousSystemValue) {
+    console.log("syncing values");
+    setPreviousSystemValues(defaultValues);
+    setHue((currentValue) => {
+      return currentValue !== defaultValues.h ? defaultValues.h : currentValue;
+    });
+    setSaturation((currentValue) => {
+      return currentValue !== defaultValues.s ? defaultValues.s : currentValue;
+    });
+    setLightness((currentValue) => {
+      return currentValue !== defaultValues.l ? defaultValues.l : currentValue;
+    });
+  }
+
+  // useEffect(() => {
+  //   console.log("syncing values");
+
+  //   setHue((currentValue) => {
+  //     return currentValue !== defaultValues.h ? defaultValues.h : currentValue;
+  //   });
+  //   setSaturation((currentValue) => {
+  //     return currentValue !== defaultValues.s ? defaultValues.s : currentValue;
+  //   });
+  //   setLightness((currentValue) => {
+  //     return currentValue !== defaultValues.l ? defaultValues.l : currentValue;
+  //   });
+  // }, [defaultValues]);
 
   return (
-    <HSLTemporaryStateContext.Provider value={{ hue, setHue }}>
+    <HSLContext.Provider
+      value={{
+        hue,
+        setHue,
+        saturation,
+        setSaturation,
+        lightness,
+        setLightness,
+      }}
+    >
       {children}
-    </HSLTemporaryStateContext.Provider>
+    </HSLContext.Provider>
   );
 }
 
-function useHSLTemporaryStateContext() {
-  const { hue, setHue } = useContext(HSLTemporaryStateContext);
+function useHSLContext() {
+  const { hue, setHue, saturation, setSaturation, lightness, setLightness } =
+    useContext(HSLContext);
 
-  if (!hue || !setHue)
-    throw new Error(
-      "HSLTemporaryState cannot be accessed outside of an HSLProvider"
-    );
+  if (
+    typeof hue !== "number" ||
+    !setHue ||
+    typeof saturation !== "number" ||
+    !setSaturation ||
+    typeof lightness !== "number" ||
+    !setLightness
+  ) {
+    throw new Error("HSL state cannot be accessed outside of an HSLProvider");
+  }
 
-  return { hue, setHue };
+  return { hue, setHue, saturation, setSaturation, lightness, setLightness };
 }
 
 export default HSLProvider;
-export { useHSLTemporaryStateContext };
+export { useHSLContext };

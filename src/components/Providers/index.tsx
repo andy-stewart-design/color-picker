@@ -1,8 +1,13 @@
 import { ReactNode } from "react";
 import ActiveInputProvider from "./ActiveInput";
+import FormProvider from "./FormProvider";
 
 function Providers({ children }: { children: ReactNode }) {
-  return <ActiveInputProvider>{children}</ActiveInputProvider>;
+  return (
+    <FormProvider>
+      <ActiveInputProvider>{children}</ActiveInputProvider>
+    </FormProvider>
+  );
 }
 
 export default Providers;

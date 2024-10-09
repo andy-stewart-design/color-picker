@@ -1,4 +1,4 @@
-import { CSSProperties, useActionState, useMemo } from "react";
+import { useActionState, useEffect, useMemo } from "react";
 import { formatHex } from "culori";
 import ColorForm from "./components/ColorForm";
 import { hsl } from "@/utils/culori";
@@ -59,11 +59,15 @@ function App() {
       .reverse();
   }, [lightnessArray, formValue]);
 
+  useEffect(() => {
+    const style = formatCSSVariables(formValue.h, formValue.s);
+    Object.keys(style).forEach((property) => {
+      document.documentElement.style.setProperty(property, style[property]);
+    });
+  }, [formValue]);
+
   return (
-    <main
-      className={s.main}
-      style={formatCSSVariables(formValue.h, formValue.s)}
-    >
+    <main className={s.main}>
       <Providers>
         <div>
           <ColorForm
@@ -92,14 +96,12 @@ function formatCSSVariables(h: number, s: number) {
     "--color-primary-900": formatHex({ mode, h, s, l: 0.1 }),
     "--color-primary-saturated": formatHex({ mode, h, s: 0.9, l: 0.5 }),
     "--color-primary-desaturated": formatHex({ mode, h, s: 0.1, l: 0.5 }),
-  } as CSSProperties;
+  } as Record<string, string>;
 }
 
 function handleSubmit(previousState: ColorFormValues, formData: FormData) {
   const nextState = validateFormData(formData, previousState);
   const changedValues = compareObjects(previousState, nextState);
-
-  console.log(nextState);
 
   if ("numColors" in changedValues) {
     return nextState;
