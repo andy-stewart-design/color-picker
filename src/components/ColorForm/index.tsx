@@ -30,16 +30,6 @@ function ColorForm({ formState, action }: Props) {
   return (
     <HSLProvider defaultValues={formState}>
       <form className={s.form} onSubmit={onSubmit} ref={formRef}>
-        <NumberInput
-          key={formState.numColors}
-          name="numColors"
-          defaultValue={formState.numColors}
-          min={3}
-          max={23}
-          formRef={formRef}
-        >
-          Palette Size
-        </NumberInput>
         <HexInputWrapper>
           <HSLPopover
             systemValues={formState}
@@ -55,6 +45,16 @@ function ColorForm({ formState, action }: Props) {
           />
         </HexInputWrapper>
         <HSLHiddenInputs systemValues={formState} />
+        <NumberInput
+          key={formState.numColors}
+          name="numColors"
+          defaultValue={formState.numColors}
+          min={3}
+          max={23}
+          formRef={formRef}
+        >
+          Palette Size
+        </NumberInput>
       </form>
     </HSLProvider>
   );

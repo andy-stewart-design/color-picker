@@ -1,3 +1,4 @@
+import { useActiveInputContext } from "@/components/Providers/ActiveInput";
 import type {
   KeyboardEvent,
   ChangeEvent,
@@ -7,7 +8,6 @@ import type {
   SetStateAction,
 } from "react";
 import s from "./style.module.css";
-import { useActiveInputContext } from "../Providers/ActiveInput";
 
 interface HexInputWrapperProps {
   children: ReactNode;
