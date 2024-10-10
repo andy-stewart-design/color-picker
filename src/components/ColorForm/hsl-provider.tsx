@@ -37,7 +37,6 @@ function HSLProvider({ children, defaultValues }: HSLProviderProps) {
   // console.log("defaultValues match", defaultValues === previousSystemValue);
 
   if (defaultValues !== previousSystemValue) {
-    console.log("syncing values");
     setPreviousSystemValues(defaultValues);
     setHue((currentValue) => {
       return currentValue !== defaultValues.h ? defaultValues.h : currentValue;

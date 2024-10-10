@@ -18,6 +18,7 @@ import {
 } from "react-aria-components";
 import { useActiveInputContext } from "@/components/Providers/ActiveInput";
 import s from "./style.module.css";
+import { useFormContext } from "../Providers/FormProvider";
 
 type Props = {
   variant?: "default" | "hue" | "saturation" | "lightness";
@@ -88,6 +89,7 @@ function Slider({ variant, name, label, formRef, ...props }: Props) {
 function SliderNumberField({ className }: { className?: string }) {
   const state = useContext(SliderStateContext);
   const labelProps = useSlottedContext(LabelContext);
+  const formRef = useFormContext();
 
   if (!labelProps) return null;
 
@@ -96,7 +98,10 @@ function SliderNumberField({ className }: { className?: string }) {
       className={className}
       aria-labelledby={labelProps.id}
       value={state.values[0]}
-      onChange={(v) => state.setThumbValue(0, v)}
+      onChange={(v) => {
+        state.setThumbValue(0, v);
+        setTimeout(() => formRef.current?.requestSubmit(), 0);
+      }}
     >
       <Input />
     </NumberField>

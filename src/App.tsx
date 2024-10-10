@@ -18,6 +18,7 @@ export interface ColorDefinition {
 
 export interface ColorFormValues extends ColorDefinition {
   numColors: number;
+  keyIndex: number;
 }
 
 function App() {
@@ -31,7 +32,8 @@ function App() {
       formValue.l,
       formValue.numColors,
       0.05,
-      0.9
+      0.9,
+      formValue.keyIndex
     );
   }, [formValue]);
 
@@ -73,7 +75,7 @@ function App() {
           <ColorForm
             // key={Object.values(formValue).join("-")}
             action={formAction}
-            formState={formValue}
+            formState={{ ...formValue, keyIndex: lightnessArray.keyIndex }}
           />
         </div>
         <ColorGrid
@@ -103,7 +105,14 @@ function handleSubmit(previousState: ColorFormValues, formData: FormData) {
   const nextState = validateFormData(formData, previousState);
   const changedValues = compareObjects(previousState, nextState);
 
-  if ("numColors" in changedValues) {
+  if (Object.keys(changedValues).length === 0) {
+    return previousState;
+  } else if (
+    Object.keys(changedValues).length === 1 &&
+    "keyIndex" in changedValues
+  ) {
+    return nextState;
+  } else if ("numColors" in changedValues) {
     return nextState;
   } else if ("hex" in changedValues) {
     const nextHsl = hsl(`#${nextState.hex}`);
@@ -113,6 +122,7 @@ function handleSubmit(previousState: ColorFormValues, formData: FormData) {
       s: nextHsl.s,
       l: nextHsl.l,
       numColors: nextState.numColors,
+      keyIndex: -1,
     };
   } else {
     const nextH = "h" in changedValues ? nextState.h : previousState.h;
@@ -132,6 +142,7 @@ function handleSubmit(previousState: ColorFormValues, formData: FormData) {
       l: nextL,
       hex: nextHex.replace("#", ""),
       numColors: nextState.numColors,
+      keyIndex: -1,
     };
   }
 }
@@ -145,6 +156,7 @@ function validateFormData(
   const saturation = formData.get("saturation");
   const lightness = formData.get("lightness");
   const numColors = formData.get("numColors");
+  const keyIndex = formData.get("keyIndex");
 
   return {
     hex: isString(hex) ? hex : previousState.hex,
@@ -154,6 +166,7 @@ function validateFormData(
     numColors: isString(numColors)
       ? Number(numColors)
       : previousState.numColors,
+    keyIndex: isString(keyIndex) ? Number(keyIndex) : previousState.keyIndex,
   };
 }
 
@@ -165,7 +178,8 @@ function createLinearDistribution(
   seed: number | null,
   length = 11,
   min = 0.1,
-  max = 0.95
+  max = 0.95,
+  keyIndex = -1
 ): {
   range: number[];
   keyIndex: number;
@@ -179,7 +193,7 @@ function createLinearDistribution(
     };
   }
 
-  const params = getLinearDistributionParams(seed, length, min, max);
+  const params = getLinearDistributionParams(seed, length, min, max, keyIndex);
 
   const lowerSteps = params.keyIndex;
   const lowerStep = (params.keyValue - params.min) / lowerSteps;
@@ -216,40 +230,50 @@ function getLinearDistributionParams(
   seed: number,
   length = 11,
   min = 0.1,
-  max = 0.95
+  max = 0.95,
+  keyIndex = -1
 ) {
   const idealDistribution = createLinearDistribution(null, length, min, max);
 
-  const parameters = idealDistribution.range.reduce(
-    (acc, value, index) => {
-      if (index === 0) {
-        if (seed <= value) return { keyIndex: 0, min: seed, max };
-      } else if (index === length - 1) {
-        if (acc.keyIndex > -1) return acc;
-        else
-          return {
-            ...acc,
-            keyIndex: length - 1,
-            max: seed,
-          };
-      }
+  if (keyIndex < 0) {
+    const parameters = idealDistribution.range.reduce(
+      (acc, value, index) => {
+        if (index === 0) {
+          if (seed <= value) return { keyIndex: 0, min: seed, max };
+        } else if (index === length - 1) {
+          if (acc.keyIndex > -1) return acc;
+          else
+            return {
+              ...acc,
+              keyIndex: length - 1,
+              max: seed,
+            };
+        }
 
-      const nextValue = idealDistribution.range[index + 1];
+        const nextValue = idealDistribution.range[index + 1];
 
-      if (seed >= value && seed < nextValue) {
-        const lowerDist = seed - value;
-        const upperDist = nextValue - seed;
+        if (seed >= value && seed < nextValue) {
+          const lowerDist = seed - value;
+          const upperDist = nextValue - seed;
 
-        if (lowerDist <= upperDist) return { ...acc, keyIndex: index };
-        else return { ...acc, keyIndex: index + 1 };
-      }
+          if (lowerDist <= upperDist) return { ...acc, keyIndex: index };
+          else return { ...acc, keyIndex: index + 1 };
+        }
 
-      return acc;
-    },
-    { keyIndex: -1, min, max }
-  );
+        return acc;
+      },
+      { keyIndex: -1, min, max }
+    );
 
-  return { ...parameters, keyValue: seed };
+    return { ...parameters, keyValue: seed };
+  } else {
+    return {
+      keyValue: seed,
+      min,
+      max,
+      keyIndex,
+    };
+  }
 }
 
 function getSaturationValue(

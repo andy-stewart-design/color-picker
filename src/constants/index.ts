@@ -6,6 +6,7 @@ const DEFAULT_VALUES = {
   s: roundTo(0.8431372549019608, 2),
   l: roundTo(0.6, 2),
   numColors: 11,
+  keyIndex: -1,
 };
 
 const CARD_IDS = Array.from({ length: 23 }, () => crypto.randomUUID());

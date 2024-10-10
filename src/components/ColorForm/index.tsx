@@ -44,6 +44,15 @@ function ColorForm({ formState, action }: Props) {
         >
           Palette Size
         </NumberInput>
+        <NumberInput
+          key={formState.keyIndex}
+          name="keyIndex"
+          defaultValue={formState.keyIndex}
+          min={0}
+          max={formState.numColors}
+        >
+          Key Index
+        </NumberInput>
       </form>
     </HSLProvider>
   );
