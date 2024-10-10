@@ -1,10 +1,3 @@
-import type {
-  ComponentPropsWithoutRef,
-  FocusEvent,
-  KeyboardEvent,
-  ReactNode,
-  RefObject,
-} from "react";
 import {
   Button,
   Group,
@@ -12,9 +5,16 @@ import {
   Label,
   NumberField,
 } from "react-aria-components";
-import { useActiveInputContext } from "@/components/Providers/ActiveInput";
-import s from "./style.module.css";
 import clsx from "clsx";
+import { useFormContext } from "../Providers/FormProvider";
+import { useActiveInputContext } from "@/components/Providers/ActiveInput";
+import type {
+  ComponentPropsWithoutRef,
+  FocusEvent,
+  KeyboardEvent,
+  ReactNode,
+} from "react";
+import s from "./style.module.css";
 
 type NumberFieldProps = ComponentPropsWithoutRef<typeof NumberField>;
 
@@ -25,18 +25,10 @@ interface Props {
   defaultValue: NumberFieldProps["defaultValue"];
   min: NumberFieldProps["minValue"];
   max: NumberFieldProps["maxValue"];
-  formRef: RefObject<HTMLFormElement | null>;
 }
 
-function NumberInput({
-  name,
-  defaultValue,
-  label,
-  children,
-  formRef,
-  min,
-  max,
-}: Props) {
+function NumberInput({ name, defaultValue, label, children, min, max }: Props) {
+  const formRef = useFormContext();
   const activeInput = useActiveInputContext();
 
   function handleKeyUp(e: KeyboardEvent<Element>) {

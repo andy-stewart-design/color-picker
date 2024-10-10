@@ -94,6 +94,10 @@
     font-size: inherit;
   }
 
+  label {
+    font-size: 0.875rem;
+  }
+
   /* Anything that has been anchored to should have extra scroll margin */
   :target {
     scroll-margin-block: 5ex;

@@ -2,27 +2,62 @@ import { useActiveInputContext } from "@/components/Providers/ActiveInput";
 import type {
   KeyboardEvent,
   ChangeEvent,
-  RefObject,
   ReactNode,
   Dispatch,
   SetStateAction,
 } from "react";
+import HSLPopover from "@/components/ColorForm/hsl-popover";
+import { useFormContext } from "@/components/Providers/FormProvider";
+import type { ColorFormValues } from "@/App";
 import s from "./style.module.css";
+
+// ------------------------------------------------
+// DEFAULT EXPORT: KEY COLOR INPUT
+// ------------------------------------------------
+
+interface KeyColorInputProps {
+  systemValues: ColorFormValues;
+  swatchColor: string;
+  setSwatchColor: Dispatch<SetStateAction<string>>;
+}
+
+function KeyColorInput({
+  systemValues,
+  swatchColor,
+  setSwatchColor,
+}: KeyColorInputProps) {
+  return (
+    <div className={s.componentWrapper}>
+      <label htmlFor="hex-input">Key Color</label>
+      <HexInputWrapper>
+        <HSLPopover
+          systemValues={systemValues}
+          swatchColor={swatchColor}
+          setSwatchColor={setSwatchColor}
+        />
+        <HexInput
+          key={`hidden-${systemValues.hex}`}
+          name="hex"
+          id="hex-input"
+          defaultValue={systemValues.hex}
+          setSwatchColor={setSwatchColor}
+        />
+      </HexInputWrapper>
+    </div>
+  );
+}
+
+// ------------------------------------------------
+// HEX INPUT WRAPPER
+// ------------------------------------------------
 
 interface HexInputWrapperProps {
   children: ReactNode;
 }
 
-interface HexInputProps {
-  name: string;
-  defaultValue: string;
-  formRef: RefObject<HTMLFormElement | null>;
-  setSwatchColor: Dispatch<SetStateAction<string>>;
-}
-
 function HexInputWrapper({ children }: HexInputWrapperProps) {
   return (
-    <div className={s.wrapper}>
+    <div className={s.inputWrapper}>
       {children}
       <span className={s.hex} style={{ opacity: 0.4 }}>
         #
@@ -31,12 +66,19 @@ function HexInputWrapper({ children }: HexInputWrapperProps) {
   );
 }
 
-function HexInput({
-  name,
-  formRef,
-  defaultValue,
-  setSwatchColor,
-}: HexInputProps) {
+// ------------------------------------------------
+// HEX INPUT
+// ------------------------------------------------
+
+interface HexInputProps {
+  id: string;
+  name: string;
+  defaultValue: string;
+  setSwatchColor: Dispatch<SetStateAction<string>>;
+}
+
+function HexInput({ id, name, defaultValue, setSwatchColor }: HexInputProps) {
+  const formRef = useFormContext();
   const activeInput = useActiveInputContext();
 
   function handleKeyDown(e: KeyboardEvent<HTMLInputElement>) {
@@ -57,6 +99,7 @@ function HexInput({
 
   return (
     <input
+      id={id}
       className={s.input}
       name={name}
       onChange={handleHexChange}
@@ -67,6 +110,10 @@ function HexInput({
     />
   );
 }
+
+// ------------------------------------------------
+// HELPER FUNCTIONS
+// ------------------------------------------------
 
 function handleHexChange(e: ChangeEvent<HTMLInputElement>) {
   let value = e.target.value.toLocaleLowerCase();
@@ -85,5 +132,5 @@ function validateHexValue(value: string) {
   } else return null;
 }
 
-export default HexInput;
+export default KeyColorInput;
 export { HexInput, HexInputWrapper };

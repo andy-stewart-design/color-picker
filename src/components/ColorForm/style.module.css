@@ -1,7 +1,7 @@
 .form {
   display: grid;
   grid-auto-rows: max-content;
-  gap: 1.25rem;
+  gap: 1.5rem;
   padding-inline: 1rem;
   padding-block: 1.5rem;
   min-height: 100lvh;

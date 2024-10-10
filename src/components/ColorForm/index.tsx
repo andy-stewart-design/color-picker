@@ -1,8 +1,7 @@
 import { startTransition, useState } from "react";
-import { HexInput, HexInputWrapper } from "@/components/HexInput";
+import KeyColorInput from "@/components/HexInput";
 import NumberInput from "@/components/NumberInput";
 import HSLProvider from "@/components/ColorForm/hsl-provider";
-import HSLPopover from "@/components/ColorForm/hsl-popover";
 import HSLHiddenInputs from "@/components/ColorForm/hsl-hidden-inputs";
 import { useFormContext } from "@/components/Providers/FormProvider";
 import type { ColorFormValues } from "@/App";
@@ -19,7 +18,7 @@ function ColorForm({ formState, action }: Props) {
 
   function onSubmit(event: React.FormEvent) {
     event.preventDefault();
-    const form = event.target;
+    const form = formRef.current;
 
     if (form instanceof HTMLFormElement) {
       const formData = new FormData(form);
@@ -30,20 +29,11 @@ function ColorForm({ formState, action }: Props) {
   return (
     <HSLProvider defaultValues={formState}>
       <form className={s.form} onSubmit={onSubmit} ref={formRef}>
-        <HexInputWrapper>
-          <HSLPopover
-            systemValues={formState}
-            swatchColor={swatchColor}
-            setSwatchColor={setSwatchColor}
-          />
-          <HexInput
-            key={`hidden-${formState.hex}`}
-            name="hex"
-            defaultValue={formState.hex}
-            formRef={formRef}
-            setSwatchColor={setSwatchColor}
-          />
-        </HexInputWrapper>
+        <KeyColorInput
+          systemValues={formState}
+          swatchColor={swatchColor}
+          setSwatchColor={setSwatchColor}
+        />
         <HSLHiddenInputs systemValues={formState} />
         <NumberInput
           key={formState.numColors}
@@ -51,7 +41,6 @@ function ColorForm({ formState, action }: Props) {
           defaultValue={formState.numColors}
           min={3}
           max={23}
-          formRef={formRef}
         >
           Palette Size
         </NumberInput>
