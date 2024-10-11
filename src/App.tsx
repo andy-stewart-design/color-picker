@@ -1,13 +1,13 @@
 import { useActionState, useEffect, useMemo } from "react";
 import { formatHex } from "culori";
+import Providers from "./components/Providers";
 import ColorForm from "./components/ColorForm";
+import ColorGrid from "./components/ColorGrid";
 import { hsl } from "@/utils/culori";
 import { roundTo } from "@/utils/math";
 import { compareObjects } from "@/utils/object";
 import { DEFAULT_VALUES } from "@/constants";
 import s from "./app.module.css";
-import ColorGrid from "./components/ColorGrid";
-import Providers from "./components/Providers";
 
 export interface ColorDefinition {
   hex: string;
@@ -31,34 +31,29 @@ function App() {
     return createLinearDistribution(
       formValue.l,
       formValue.numColors,
-      0.05,
       0.9,
+      0.05,
       formValue.keyIndex
     );
   }, [formValue]);
 
   const spectrum = useMemo(() => {
-    return lightnessArray.range
-      .map((value, index) => {
-        const saturation = getSaturationValue(
-          index,
-          lightnessArray.range.length,
-          Math.max(
-            0,
-            formValue.s - (formValue.s / 16) * lightnessArray.keyIndex
-          ),
-          formValue.s,
-          lightnessArray.keyIndex - Math.floor(lightnessArray.range.length / 2)
-        );
+    return lightnessArray.range.map((value, index) => {
+      const saturation = getSaturationValue(
+        index,
+        lightnessArray.range.length,
+        Math.max(0, formValue.s - (formValue.s / 16) * lightnessArray.keyIndex),
+        formValue.s,
+        lightnessArray.keyIndex - Math.floor(lightnessArray.range.length / 2)
+      );
 
-        const HSL = { h: formValue.h, s: saturation, l: value };
+      const HSL = { h: formValue.h, s: saturation, l: value };
 
-        return {
-          ...HSL,
-          hex: formatHex({ mode: "hsl", ...HSL }),
-        };
-      })
-      .reverse();
+      return {
+        ...HSL,
+        hex: formatHex({ mode: "hsl", ...HSL }),
+      };
+    });
   }, [lightnessArray, formValue]);
 
   useEffect(() => {
@@ -177,8 +172,8 @@ function isString(value: unknown): value is string {
 function createLinearDistribution(
   seed: number | null,
   length = 11,
-  min = 0.1,
-  max = 0.95,
+  start = 0.1,
+  end = 0.95,
   keyIndex = -1
 ): {
   range: number[];
@@ -187,32 +182,35 @@ function createLinearDistribution(
   if (seed === null) {
     return {
       range: Array.from({ length }, (_, i) => {
-        return min + (i * (max - min)) / (length - 1);
+        return start + (i * (end - start)) / (length - 1);
       }),
       keyIndex: -1,
     };
   }
 
-  const params = getLinearDistributionParams(seed, length, min, max, keyIndex);
+  const params = getLinearDistributionParams(
+    seed,
+    length,
+    start,
+    end,
+    keyIndex
+  );
 
   const lowerSteps = params.keyIndex;
-  const lowerStep = (params.keyValue - params.min) / lowerSteps;
+  const lowerStep = (params.keyValue - params.start) / lowerSteps;
   const upperSteps = length - 1 - params.keyIndex;
-  const upperStep = (params.max - params.keyValue) / upperSteps;
+  const upperStep = (params.end - params.keyValue) / upperSteps;
 
-  if (params.keyIndex === 0 || params.keyIndex === length - 1) {
-    const numSteps = params.keyIndex === 0 ? upperSteps : lowerSteps;
-    const step = params.keyIndex === 0 ? upperStep : lowerStep;
-
+  if (params.keyIndex === length - 1) {
     return {
-      range: new Array(numSteps + 1).fill(0).map((_, i) => {
-        return roundTo(params.min + i * step);
+      range: new Array(lowerSteps + 1).fill(0).map((_, i) => {
+        return roundTo(params.start + i * lowerStep);
       }),
       keyIndex: params.keyIndex,
     };
   } else {
     const lowerArray = new Array(lowerSteps).fill(0).map((_, i) => {
-      return roundTo(params.min + i * lowerStep);
+      return roundTo(params.start + i * lowerStep);
     });
 
     const upperArray = new Array(upperSteps + 1).fill(0).map((_, i) => {
@@ -229,48 +227,49 @@ function createLinearDistribution(
 function getLinearDistributionParams(
   seed: number,
   length = 11,
-  min = 0.1,
-  max = 0.95,
+  start = 0.1,
+  end = 0.95,
   keyIndex = -1
 ) {
-  const idealDistribution = createLinearDistribution(null, length, min, max);
+  const idealDistribution = createLinearDistribution(null, length, start, end);
 
   if (keyIndex < 0) {
     const parameters = idealDistribution.range.reduce(
       (acc, value, index) => {
         if (index === 0) {
-          if (seed <= value) return { keyIndex: 0, min: seed, max };
+          if (seed >= value) return { keyIndex: 0, start: seed, end: end };
         } else if (index === length - 1) {
-          if (acc.keyIndex > -1) return acc;
-          else
-            return {
-              ...acc,
-              keyIndex: length - 1,
-              max: seed,
-            };
+          if (acc.keyIndex > -1) {
+            return acc;
+          } else {
+            return { ...acc, keyIndex: length - 1, end: seed };
+          }
         }
 
         const nextValue = idealDistribution.range[index + 1];
 
-        if (seed >= value && seed < nextValue) {
-          const lowerDist = seed - value;
-          const upperDist = nextValue - seed;
+        if (seed <= value && seed > nextValue) {
+          const lowerDist = value - seed;
+          const upperDist = seed - nextValue;
 
-          if (lowerDist <= upperDist) return { ...acc, keyIndex: index };
-          else return { ...acc, keyIndex: index + 1 };
+          if (lowerDist <= upperDist) {
+            return { ...acc, keyIndex: index };
+          } else {
+            return { ...acc, keyIndex: index + 1 };
+          }
         }
 
         return acc;
       },
-      { keyIndex: -1, min, max }
+      { keyIndex: -1, start: start, end: end }
     );
 
     return { ...parameters, keyValue: seed };
   } else {
     return {
       keyValue: seed,
-      min,
-      max,
+      start: start,
+      end: end,
       keyIndex,
     };
   }

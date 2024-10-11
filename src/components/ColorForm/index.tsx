@@ -49,7 +49,7 @@ function ColorForm({ formState, action }: Props) {
           name="keyIndex"
           defaultValue={formState.keyIndex}
           min={0}
-          max={formState.numColors}
+          max={formState.numColors - 1}
         >
           Key Index
         </NumberInput>
