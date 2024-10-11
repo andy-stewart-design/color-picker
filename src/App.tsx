@@ -41,10 +41,8 @@ function App() {
     return lightnessArray.range.map((value, index) => {
       const saturation = getSaturationValue(
         index,
-        lightnessArray.range.length,
-        Math.max(0, formValue.s - (formValue.s / 16) * lightnessArray.keyIndex),
-        formValue.s,
-        lightnessArray.keyIndex - Math.floor(lightnessArray.range.length / 2)
+        lightnessArray.keyIndex,
+        formValue.s
       );
 
       const HSL = { h: formValue.h, s: saturation, l: value };
@@ -286,19 +284,15 @@ function getDistributionParams(
 
 function getSaturationValue(
   index: number,
-  maxIndex: number,
-  minValue: number = 0,
-  maxValue: number = 1,
-  shift: number = 0
+  keyIndex: number,
+  keySaturation: number
 ) {
-  const range = maxValue - minValue;
-  const peakIndex = Math.min(
-    Math.max(Math.floor((maxIndex - 1) / 2) + shift, 0),
-    maxIndex - 1
-  );
+  const minValue = Math.max(0, keySaturation - (keySaturation / 16) * keyIndex);
+  const maxValue = keySaturation;
 
-  if (peakIndex === 0 || index >= peakIndex) return maxValue;
-  else return roundTo(minValue + (range * index) / peakIndex, 4);
+  const range = maxValue - minValue;
+  if (keyIndex === 0 || index <= keyIndex) return maxValue;
+  else return roundTo(maxValue - (range * (index - keyIndex)) / keyIndex, 4);
 }
 
 // function createParabolicDistribution(

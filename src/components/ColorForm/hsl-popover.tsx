@@ -42,65 +42,63 @@ function HSLPopover({ systemValues, swatchColor, setSwatchColor }: Props) {
       />
       <Popover className={s.popover} placement="bottom start" offset={12}>
         <Dialog className={s.dialog}>
-          <div>
-            <RangeSlider
-              key={`modal-hue-${systemValues.h}`}
-              variant="hue"
-              name="hue"
-              label="Hue"
-              defaultValue={systemValues.h}
-              min={0}
-              max={360}
-              step={0.01}
-              onChange={(value) => {
-                setHue(value);
-                setSwatchColor(updateCurrentColor("h", value));
-              }}
-              onChangeEnd={(value) => {
-                formRef.current?.requestSubmit();
-                setSwatchColor(updateCurrentColor("h", value));
-              }}
-              formRef={formRef}
-            />
-            <RangeSlider
-              key={`modal-saturation-${systemValues.s}`}
-              variant="saturation"
-              name="saturation"
-              label="Saturation"
-              defaultValue={systemValues.s}
-              min={0}
-              max={1}
-              step={0.01}
-              onChange={(value) => {
-                setSaturation(value);
-                setSwatchColor(updateCurrentColor("s", value));
-              }}
-              onChangeEnd={(value) => {
-                formRef.current?.requestSubmit();
-                setSwatchColor(updateCurrentColor("s", value));
-              }}
-              formRef={formRef}
-            />
-            <RangeSlider
-              key={`modal-lightness-${systemValues.l}`}
-              variant="lightness"
-              name="lightness"
-              label="Lightness"
-              defaultValue={systemValues.l}
-              min={0}
-              max={1}
-              step={0.01}
-              onChange={(value) => {
-                setLightness(value);
-                setSwatchColor(updateCurrentColor("l", value));
-              }}
-              onChangeEnd={(value) => {
-                formRef.current?.requestSubmit();
-                setSwatchColor(updateCurrentColor("l", value));
-              }}
-              formRef={formRef}
-            />
-          </div>
+          <RangeSlider
+            key={`modal-hue-${systemValues.h}`}
+            variant="hue"
+            name="hue"
+            label="Hue"
+            defaultValue={systemValues.h}
+            min={0}
+            max={360}
+            step={0.01}
+            onChange={(value) => {
+              setHue(value);
+              setSwatchColor(updateCurrentColor("h", value));
+            }}
+            onChangeEnd={(value) => {
+              formRef.current?.requestSubmit();
+              setSwatchColor(updateCurrentColor("h", value));
+            }}
+            formRef={formRef}
+          />
+          <RangeSlider
+            key={`modal-saturation-${systemValues.s}`}
+            variant="saturation"
+            name="saturation"
+            label="Saturation"
+            defaultValue={systemValues.s}
+            min={0}
+            max={1}
+            step={0.01}
+            onChange={(value) => {
+              setSaturation(value);
+              setSwatchColor(updateCurrentColor("s", value));
+            }}
+            onChangeEnd={(value) => {
+              formRef.current?.requestSubmit();
+              setSwatchColor(updateCurrentColor("s", value));
+            }}
+            formRef={formRef}
+          />
+          <RangeSlider
+            key={`modal-lightness-${systemValues.l}`}
+            variant="lightness"
+            name="lightness"
+            label="Lightness"
+            defaultValue={systemValues.l}
+            min={0}
+            max={1}
+            step={0.01}
+            onChange={(value) => {
+              setLightness(value);
+              setSwatchColor(updateCurrentColor("l", value));
+            }}
+            onChangeEnd={(value) => {
+              formRef.current?.requestSubmit();
+              setSwatchColor(updateCurrentColor("l", value));
+            }}
+            formRef={formRef}
+          />
         </Dialog>
       </Popover>
     </DialogTrigger>

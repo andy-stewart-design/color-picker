@@ -55,7 +55,7 @@ function ColorGrid({ colors, numColors, keyIndex }: Props) {
         >
           <ColorCard
             color={colors[index]}
-            isKeyIndex={index === numColors - 1 - keyIndex}
+            isKeyIndex={index === keyIndex}
             showIndicator={showIndicators}
           />
         </div>

@@ -18,7 +18,6 @@ import {
 } from "react-aria-components";
 import { useActiveInputContext } from "@/components/Providers/ActiveInput";
 import s from "./style.module.css";
-import { useFormContext } from "../Providers/FormProvider";
 
 type Props = {
   variant?: "default" | "hue" | "saturation" | "lightness";
@@ -70,7 +69,12 @@ function Slider({ variant, name, label, formRef, ...props }: Props) {
     >
       <div className={s.topRow}>
         <Label className={s.label}>{label}</Label>
-        <SliderNumberField className={s.output} />
+        <SliderNumberField
+          formRef={formRef}
+          min={props.min}
+          max={props.max}
+          step={props.step}
+        />
       </div>
       <div className={s.trackWrapper}>
         <StyledSliderTrack>
@@ -86,21 +90,37 @@ function Slider({ variant, name, label, formRef, ...props }: Props) {
   );
 }
 
-function SliderNumberField({ className }: { className?: string }) {
+function SliderNumberField({
+  min,
+  max,
+  step,
+  formRef,
+}: {
+  min: number;
+  max: number;
+  step: number;
+  formRef: RefObject<HTMLFormElement | null>;
+}) {
   const state = useContext(SliderStateContext);
   const labelProps = useSlottedContext(LabelContext);
-  const formRef = useFormContext();
 
   if (!labelProps) return null;
 
   return (
     <NumberField
-      className={className}
+      className={s.output}
       aria-labelledby={labelProps.id}
       value={state.values[0]}
-      onChange={(v) => {
-        state.setThumbValue(0, v);
-        setTimeout(() => formRef.current?.requestSubmit(), 0);
+      minValue={min}
+      maxValue={max}
+      step={step}
+      onKeyDown={(e) => {
+        const target = e.target;
+        if (!(target instanceof HTMLInputElement)) return;
+        if (e.key === "Enter") state.setThumbValue(0, Number(target.value));
+      }}
+      onKeyUp={(e) => {
+        if (e.key === "Enter") formRef.current?.requestSubmit();
       }}
     >
       <Input />

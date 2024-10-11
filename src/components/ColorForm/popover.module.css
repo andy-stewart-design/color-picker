@@ -6,6 +6,8 @@
 }
 
 .dialog {
+  display: grid;
+  gap: 0.75rem;
   min-width: 200px;
   padding: 0.75rem 1rem 1rem;
   border: 1px solid rgb(0 0 0 / 0.1);
