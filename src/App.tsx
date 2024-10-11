@@ -170,7 +170,7 @@ function isString(value: unknown): value is string {
 }
 
 function createLinearDistribution(
-  seed: number | null,
+  seed: number,
   length = 11,
   start = 0.1,
   end = 0.95,
@@ -179,22 +179,7 @@ function createLinearDistribution(
   range: number[];
   keyIndex: number;
 } {
-  if (seed === null) {
-    return {
-      range: Array.from({ length }, (_, i) => {
-        return start + (i * (end - start)) / (length - 1);
-      }),
-      keyIndex: -1,
-    };
-  }
-
-  const params = getLinearDistributionParams(
-    seed,
-    length,
-    start,
-    end,
-    keyIndex
-  );
+  const params = getDistributionParams(seed, start, end, length, keyIndex);
 
   const lowerSteps = params.keyIndex;
   const lowerStep = (params.keyValue - params.start) / lowerSteps;
@@ -224,56 +209,80 @@ function createLinearDistribution(
   }
 }
 
-function getLinearDistributionParams(
-  seed: number,
+function getDistributionParams(
+  keyValue: number,
+  start = 0.9,
+  end = 0.05,
   length = 11,
-  start = 0.1,
-  end = 0.95,
   keyIndex = -1
 ) {
-  const idealDistribution = createLinearDistribution(null, length, start, end);
+  if (keyIndex >= 0) {
+    return { keyValue, start, end, keyIndex };
+  }
 
-  if (keyIndex < 0) {
-    const parameters = idealDistribution.range.reduce(
-      (acc, value, index) => {
-        if (index === 0) {
-          if (seed >= value) return { keyIndex: 0, start: seed, end: end };
-        } else if (index === length - 1) {
-          if (acc.keyIndex > -1) {
-            return acc;
-          } else {
-            return { ...acc, keyIndex: length - 1, end: seed };
-          }
-        }
-
-        const nextValue = idealDistribution.range[index + 1];
-
-        if (seed <= value && seed > nextValue) {
-          const lowerDist = value - seed;
-          const upperDist = seed - nextValue;
-
-          if (lowerDist <= upperDist) {
-            return { ...acc, keyIndex: index };
-          } else {
-            return { ...acc, keyIndex: index + 1 };
-          }
-        }
-
-        return acc;
-      },
-      { keyIndex: -1, start: start, end: end }
-    );
-
-    return { ...parameters, keyValue: seed };
+  if (keyValue >= start) {
+    return { keyIndex: 0, start: keyValue, end, keyValue };
+  } else if (keyValue <= end) {
+    return { keyIndex: length - 1, start, end: keyValue, keyValue };
   } else {
-    return {
-      keyValue: seed,
-      start: start,
-      end: end,
-      keyIndex,
-    };
+    const step = (start - end) / (length - 1);
+    const rawIndex = (start - keyValue) / step;
+    const nextKeyIndex = Math.min(Math.floor(rawIndex), length - 2);
+
+    return { keyIndex: nextKeyIndex, start, end, keyValue };
   }
 }
+
+// function getLinearDistributionParams(
+//   seed: number,
+//   length = 11,
+//   start = 0.1,
+//   end = 0.95,
+//   keyIndex = -1
+// ) {
+//   const idealDistribution = createLinearDistribution(null, length, start, end);
+
+//   if (keyIndex < 0) {
+//     const parameters = idealDistribution.range.reduce(
+//       (acc, value, index) => {
+//         if (index === 0) {
+//           if (seed >= value) return { keyIndex: 0, start: seed, end: end };
+//         } else if (index === length - 1) {
+//           if (acc.keyIndex > -1) {
+//             return acc;
+//           } else {
+//             return { ...acc, keyIndex: length - 1, end: seed };
+//           }
+//         }
+
+//         const nextValue = idealDistribution.range[index + 1];
+
+//         if (seed <= value && seed > nextValue) {
+//           const lowerDist = value - seed;
+//           const upperDist = seed - nextValue;
+
+//           if (lowerDist <= upperDist) {
+//             return { ...acc, keyIndex: index };
+//           } else {
+//             return { ...acc, keyIndex: index + 1 };
+//           }
+//         }
+
+//         return acc;
+//       },
+//       { keyIndex: -1, start: start, end: end }
+//     );
+
+//     return { ...parameters, keyValue: seed };
+//   } else {
+//     return {
+//       keyValue: seed,
+//       start: start,
+//       end: end,
+//       keyIndex,
+//     };
+//   }
+// }
 
 function getSaturationValue(
   index: number,

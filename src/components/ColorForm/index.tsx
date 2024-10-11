@@ -36,7 +36,7 @@ function ColorForm({ formState, action }: Props) {
         />
         <HSLHiddenInputs systemValues={formState} />
         <NumberInput
-          key={formState.numColors}
+          key={`numColors-${formState.numColors}`}
           name="numColors"
           defaultValue={formState.numColors}
           min={3}
@@ -45,7 +45,7 @@ function ColorForm({ formState, action }: Props) {
           Palette Size
         </NumberInput>
         <NumberInput
-          key={formState.keyIndex}
+          key={`keyIndex-${formState.keyIndex}`}
           name="keyIndex"
           defaultValue={formState.keyIndex}
           min={0}
