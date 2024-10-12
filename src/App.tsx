@@ -27,6 +27,8 @@ function App() {
     DEFAULT_VALUES
   );
 
+  localStorage.setItem("keyColor", JSON.stringify(formValue));
+
   const lightnessArray = useMemo(() => {
     return createLinearDistribution(
       formValue.l,
