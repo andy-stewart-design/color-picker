@@ -27,8 +27,6 @@ function App() {
     DEFAULT_VALUES
   );
 
-  localStorage.setItem("keyColor", JSON.stringify(formValue));
-
   const lightnessArray = useMemo(() => {
     return createLinearDistribution(
       formValue.l,
@@ -55,6 +53,11 @@ function App() {
       };
     });
   }, [lightnessArray, formValue]);
+
+  useSetLocalStorage(
+    "keyColor",
+    JSON.stringify({ ...formValue, keyIndex: lightnessArray.keyIndex })
+  );
 
   useEffect(() => {
     const style = formatCSSVariables(formValue.h, formValue.s);
@@ -233,6 +236,31 @@ function getDistributionParams(
   }
 }
 
+function getSaturationValue(
+  index: number,
+  keyIndex: number,
+  keySaturation: number
+) {
+  const minValue = Math.max(0, keySaturation - (keySaturation / 16) * keyIndex);
+  const maxValue = keySaturation;
+
+  const range = maxValue - minValue;
+  if (keyIndex === 0 || index <= keyIndex) return maxValue;
+  else return roundTo(maxValue - (range * (index - keyIndex)) / keyIndex, 4);
+}
+
+function useSetLocalStorage(key: string, value: string | number) {
+  useEffect(() => {
+    const currentValue = localStorage.getItem(key);
+    console.log(currentValue, value);
+
+    if (currentValue === value) return;
+
+    console.log("setting local storage item");
+    localStorage.setItem(key, value.toString());
+  }, [key, value]);
+}
+
 // function getLinearDistributionParams(
 //   seed: number,
 //   length = 11,
@@ -283,19 +311,6 @@ function getDistributionParams(
 //     };
 //   }
 // }
-
-function getSaturationValue(
-  index: number,
-  keyIndex: number,
-  keySaturation: number
-) {
-  const minValue = Math.max(0, keySaturation - (keySaturation / 16) * keyIndex);
-  const maxValue = keySaturation;
-
-  const range = maxValue - minValue;
-  if (keyIndex === 0 || index <= keyIndex) return maxValue;
-  else return roundTo(maxValue - (range * (index - keyIndex)) / keyIndex, 4);
-}
 
 // function createParabolicDistribution(
 //   arrayLength: number,
