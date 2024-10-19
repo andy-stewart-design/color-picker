@@ -3,6 +3,7 @@
   flex-direction: column-reverse;
   height: 100svh;
   overflow: clip;
+  border: 4px solid salmon;
 
   @media (width >= 480px) {
     display: grid;
