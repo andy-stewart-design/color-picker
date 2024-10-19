@@ -1,8 +1,18 @@
 .main {
-  display: grid;
-  grid-template-columns: 256px 1fr;
+  display: flex;
+  flex-direction: column-reverse;
+  height: 100svh;
+  overflow: clip;
+
+  @media (width >= 480px) {
+    display: grid;
+    grid-template-columns: 256px 1fr;
+    grid-template-rows: auto;
+  }
 
   @media (width >= 560px) {
+    display: grid;
     grid-template-columns: 320px 1fr;
+    grid-template-rows: auto;
   }
 }

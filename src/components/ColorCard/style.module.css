@@ -1,12 +1,16 @@
 .card {
   position: relative;
-
   display: flex;
+  min-height: 64px;
   transition: background var(--grid-transition-duration)
     var(--grid-transition-easing);
 
   .hex {
-    padding: 2ch;
+    padding: 1ch;
+
+    @media (width >= 560px) {
+      padding: 2ch;
+    }
 
     button {
       background: rgb(0 0 0 / 0.85);

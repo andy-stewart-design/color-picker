@@ -1,12 +1,36 @@
 .form {
+  position: relative;
   display: grid;
   grid-auto-rows: max-content;
   gap: 1.5rem;
   padding-inline: 1rem;
-  padding-block: 1.5rem;
-  min-height: 100lvh;
+  padding-block-start: 0.5rem;
+  padding-block-end: 1.5rem;
+  z-index: 1000;
+  background: white;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: -1.25rem;
+    left: 0;
+    width: 100%;
+    height: calc((1.25rem + 2px));
+    background: white;
+    border-radius: 1rem 1rem 0 0;
+  }
+
+  @media (width >= 480px) {
+    padding-block-start: 1.5rem;
+
+    &::before {
+      display: none;
+    }
+  }
 
   @media (width >= 560px) {
-    padding: 2rem;
+    min-height: 100svh;
+    padding-inline: 1.5rem;
+    padding-block: 2rem;
   }
 }

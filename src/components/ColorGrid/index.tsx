@@ -30,36 +30,38 @@ function ColorGrid({ colors, numColors, keyIndex }: Props) {
   }, []);
 
   return (
-    <section
-      className={s.grid}
-      style={
-        {
-          gridTemplateRows: [...activeRows, ...inactiveRows].join(" "),
-          "--num-colors": numColors,
-        } as CSSProperties
-      }
-    >
-      {Array.from({ length: 23 }, (_, i) => i).map((index) => (
-        <div
-          key={CARD_IDS[index]}
-          data-index={index}
-          className={s.cardWrapper}
-          style={
-            {
-              display: "grid",
-              overflow: "hidden",
-              "--background": colors[index] ? colors[index].hex : "black",
-            } as CSSProperties
-          }
-          data-active={index < numColors}
-        >
-          <ColorCard
-            color={colors[index]}
-            isKeyIndex={index === keyIndex}
-            showIndicator={showIndicators}
-          />
-        </div>
-      ))}
+    <section className={s.gridWrapper}>
+      <div
+        className={s.grid}
+        style={
+          {
+            gridTemplateRows: [...activeRows, ...inactiveRows].join(" "),
+            "--num-colors": numColors,
+          } as CSSProperties
+        }
+      >
+        {Array.from({ length: 23 }, (_, i) => i).map((index) => (
+          <div
+            key={CARD_IDS[index]}
+            data-index={index}
+            className={s.cardWrapper}
+            style={
+              {
+                display: "grid",
+                overflow: "hidden",
+                "--background": colors[index] ? colors[index].hex : "black",
+              } as CSSProperties
+            }
+            data-active={index < numColors}
+          >
+            <ColorCard
+              color={colors[index]}
+              isKeyIndex={index === keyIndex}
+              showIndicator={showIndicators}
+            />
+          </div>
+        ))}
+      </div>
     </section>
   );
 }

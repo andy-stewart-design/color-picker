@@ -1,12 +1,24 @@
+.gridWrapper {
+  flex-grow: 1;
+  overflow-y: scroll;
+
+  @media (width >= 560px) {
+    min-height: 100svh;
+  }
+}
+
 .grid {
   --grid-transition-duration: 500ms;
   --grid-transition-easing: cubic-bezier(0.33, 1, 0.68, 1);
 
   display: grid;
   overflow: clip;
-  min-height: 100lvh;
+  min-height: 100%;
   transition: grid-template-rows var(--grid-transition-duration)
     var(--grid-transition-easing);
+  padding-bottom: 1.25rem;
+  /* background: var(--color-primary-900); */
+  background: black;
 }
 
 .cardWrapper {
