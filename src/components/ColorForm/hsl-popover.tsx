@@ -14,9 +14,15 @@ interface Props {
   };
   swatchColor: string;
   setSwatchColor: Dispatch<SetStateAction<string>>;
+  width?: number;
 }
 
-function HSLPopover({ systemValues, swatchColor, setSwatchColor }: Props) {
+function HSLPopover({
+  systemValues,
+  swatchColor,
+  setSwatchColor,
+  width,
+}: Props) {
   const formRef = useFormContext();
   const { setHue, setSaturation, setLightness } = useHSLContext();
 
@@ -40,7 +46,12 @@ function HSLPopover({ systemValues, swatchColor, setSwatchColor }: Props) {
         style={{ backgroundColor: swatchColor }}
         aria-label="Open HSL controls"
       />
-      <Popover className={s.popover} placement="bottom start" offset={12}>
+      <Popover
+        className={s.popover}
+        style={{ width: width ?? "auto" }}
+        placement="bottom start"
+        offset={12}
+      >
         <Dialog className={s.dialog}>
           <RangeSlider
             key={`modal-hue-${systemValues.h}`}

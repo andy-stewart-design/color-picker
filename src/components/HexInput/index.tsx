@@ -1,15 +1,16 @@
 import { useActiveInputContext } from "@/components/Providers/ActiveInput";
-import type {
-  KeyboardEvent,
-  ChangeEvent,
-  ReactNode,
-  Dispatch,
-  SetStateAction,
+import {
+  type KeyboardEvent,
+  type ChangeEvent,
+  type ReactNode,
+  type Dispatch,
+  type SetStateAction,
 } from "react";
 import HSLPopover from "@/components/ColorForm/hsl-popover";
 import { useFormContext } from "@/components/Providers/FormProvider";
 import type { ColorFormValues } from "@/App";
 import s from "./style.module.css";
+import { useMeasure } from "@/hooks/use-measure";
 
 // ------------------------------------------------
 // DEFAULT EXPORT: KEY COLOR INPUT
@@ -26,6 +27,8 @@ function KeyColorInput({
   swatchColor,
   setSwatchColor,
 }: KeyColorInputProps) {
+  const [inputRect, inputRef] = useMeasure<HTMLDivElement>();
+
   return (
     <div className={s.componentWrapper}>
       <label htmlFor="hex-input">Key Color</label>
@@ -34,14 +37,17 @@ function KeyColorInput({
           systemValues={systemValues}
           swatchColor={swatchColor}
           setSwatchColor={setSwatchColor}
+          width={inputRect?.width}
         />
-        <HexInput
-          key={`hidden-${systemValues.hex}`}
-          name="hex"
-          id="hex-input"
-          defaultValue={systemValues.hex}
-          setSwatchColor={setSwatchColor}
-        />
+        <div ref={inputRef} style={{ display: "grid", flex: "1 0 0" }}>
+          <HexInput
+            key={`hidden-${systemValues.hex}`}
+            name="hex"
+            id="hex-input"
+            defaultValue={systemValues.hex}
+            setSwatchColor={setSwatchColor}
+          />
+        </div>
       </HexInputWrapper>
     </div>
   );
