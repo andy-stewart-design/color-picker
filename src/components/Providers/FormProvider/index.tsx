@@ -25,7 +25,7 @@ function useFormContext() {
 
   if (!formRef) {
     throw new Error(
-      "activeInput ref cannot be accessed outside of an ActiveInputProvider"
+      "formRef ref cannot be accessed outside of an FormProvider"
     );
   }
 

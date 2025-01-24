@@ -58,6 +58,7 @@ function ColorGrid({ colors, numColors, keyIndex }: Props) {
               color={colors[index]}
               isKeyIndex={index === keyIndex}
               showIndicator={showIndicators}
+              disabled={index >= numColors}
             />
           </div>
         ))}

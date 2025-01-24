@@ -1,14 +1,16 @@
 import clsx from "clsx";
 import type { ColorDefinition } from "@/App";
 import s from "./style.module.css";
+import { useRef, useState } from "react";
 
 interface Props {
   color: ColorDefinition | undefined;
   isKeyIndex: boolean;
   showIndicator?: boolean;
+  disabled: boolean;
 }
 
-function ColorCard({ color, isKeyIndex, showIndicator }: Props) {
+function ColorCard({ color, isKeyIndex, showIndicator, disabled }: Props) {
   const style = color
     ? {
         backgroundColor: color.hex,
@@ -24,7 +26,7 @@ function ColorCard({ color, isKeyIndex, showIndicator }: Props) {
   return (
     <div className={s.card} style={style} data-active={color ? true : false}>
       <div className={s.hex}>
-        <button>{color ? color.hex : "#000000"}</button>
+        <HexButton hex={color?.hex} disabled={disabled} />
       </div>
       {showIndicator && (
         <div className={s.indicators}>
@@ -41,6 +43,29 @@ function ColorCard({ color, isKeyIndex, showIndicator }: Props) {
         </div>
       )}
     </div>
+  );
+}
+
+function HexButton({ hex, disabled }: { hex?: string; disabled: boolean }) {
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [success, setSuccess] = useState(false);
+
+  function handleClick() {
+    if (!hex || timer.current || !("navigator" in window)) return;
+
+    navigator.clipboard.writeText(hex);
+    setSuccess(true);
+
+    timer.current = setTimeout(() => {
+      setSuccess(false);
+      timer.current = null;
+    }, 2000);
+  }
+
+  return (
+    <button onClick={handleClick} disabled={disabled}>
+      {success ? "Copied!" : hex ? hex : "#000000"}
+    </button>
   );
 }
 
