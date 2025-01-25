@@ -10,28 +10,30 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@radix-ui/react-popover": "^1.1.2",
-    "browserslist": "^4.24.0",
+    "@radix-ui/react-dialog": "^1.1.5",
+    "@radix-ui/react-popover": "^1.1.5",
+    "@radix-ui/react-tabs": "^1.1.2",
+    "browserslist": "^4.24.4",
     "clsx": "^2.1.1",
     "culori": "^4.0.1",
-    "react": "19.0.0-rc-3edc000d-20240926",
-    "react-aria-components": "^1.3.3",
-    "react-dom": "19.0.0-rc-3edc000d-20240926"
+    "react": "19.0.0",
+    "react-aria-components": "^1.6.0",
+    "react-dom": "19.0.0"
   },
   "devDependencies": {
-    "@eslint/js": "^9.9.0",
+    "@eslint/js": "^9.19.0",
     "@types/culori": "^2.1.1",
-    "@types/node": "^22.7.4",
-    "@types/react": "npm:types-react@19.0.0-rc.0",
-    "@types/react-dom": "npm:types-react-dom@19.0.0-rc.0",
-    "@vitejs/plugin-react": "^4.3.1",
-    "eslint": "^9.9.0",
-    "eslint-plugin-react-hooks": "^5.1.0-rc.0",
-    "eslint-plugin-react-refresh": "^0.4.9",
-    "globals": "^15.9.0",
-    "lightningcss": "^1.27.0",
-    "typescript": "^5.5.3",
-    "typescript-eslint": "^8.0.1",
-    "vite": "^5.4.1"
+    "@types/node": "^22.10.10",
+    "@types/react": "npm:types-react@19.0.0-alpha.3",
+    "@types/react-dom": "npm:types-react-dom@19.0.0-alpha.3",
+    "@vitejs/plugin-react": "^4.3.4",
+    "eslint": "^9.19.0",
+    "eslint-plugin-react-hooks": "^5.1.0",
+    "eslint-plugin-react-refresh": "^0.4.18",
+    "globals": "^15.14.0",
+    "lightningcss": "^1.29.1",
+    "typescript": "^5.7.3",
+    "typescript-eslint": "^8.21.0",
+    "vite": "^6.0.11"
   }
 }
