@@ -1,4 +1,3 @@
-// @ts-expect-error need to update react type definitions?
 import { useActionState } from "react";
 import { formatHex } from "culori";
 import { hsl } from "@/utils/culori";
