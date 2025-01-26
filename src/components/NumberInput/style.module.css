@@ -9,20 +9,32 @@
   position: relative;
   display: flex;
   align-items: center;
-  background: rgb(0 0 0 / 0.05);
-  border: none;
-  border-radius: 3px;
-  padding-inline: 0.25rem;
+  border: 1px solid rgb(0 0 0 / 0.2);
+  border-radius: 100vmax;
+  padding-inline: 0.5rem;
+  margin-right: -0.5rem;
+
+  &:has(:focus-visible) {
+    outline: 2px solid var(--color-primary-500);
+  }
 }
 
 .input {
   max-width: 8ch;
   text-align: center;
   font-variant-numeric: tabular-nums;
-  padding-block-start: 0.5rem;
-  padding-block-end: 0.45rem;
+  padding-block-start: 0.625rem;
+  padding-block-end: 0.575rem;
   background: transparent;
   border: none;
+
+  &:focus {
+    outline: none;
+  }
+
+  &::selection {
+    background: var(--color-primary-100);
+  }
 }
 
 .button {
@@ -34,10 +46,10 @@
   height: 100%;
 
   &.dec {
-    left: 0;
+    left: 0.25rem;
   }
 
   &.inc {
-    right: 0;
+    right: 0.25rem;
   }
 }

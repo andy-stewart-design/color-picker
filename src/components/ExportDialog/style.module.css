@@ -8,7 +8,8 @@
   width: 100vw;
   height: 100svh;
   background: rgb(0 0 0 / 0.5);
-  padding: 2rem;
+  padding: 1rem;
+  backdrop-filter: blur(4px);
 }
 
 .dialog {
@@ -23,8 +24,12 @@
   pre {
     color: var(--color-primary-900);
     background: var(--color-primary-100);
-    padding: 1.5rem 2rem;
+    padding: 1.5rem 1rem;
     line-height: 1.75;
+
+    @media (width >= 480px) {
+      padding: 1.5rem 2rem;
+    }
   }
 }
 
@@ -32,7 +37,11 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.75rem 2rem 0.5rem;
+  padding: 0.75rem 1rem 0.5rem;
+
+  @media (width >= 480px) {
+    padding: 0.75rem 2rem 0.5rem;
+  }
 
   h2 {
     font-size: 0.875rem;
@@ -52,7 +61,11 @@
 }
 
 .footer {
-  padding: 1.25rem 2rem 1.5rem;
+  padding: 1.25rem 1rem 1.5rem;
+
+  @media (width >= 480px) {
+    padding: 1.25rem 2rem 1.5rem;
+  }
 
   button {
     font-weight: 500;
