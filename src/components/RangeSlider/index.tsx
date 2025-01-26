@@ -110,14 +110,14 @@ function SliderNumberField({
     <NumberField
       className={s.output}
       aria-labelledby={labelProps.id}
-      value={state.values[0]}
+      value={state?.values[0]}
       minValue={min}
       maxValue={max}
       step={step}
       onKeyDown={(e) => {
         const target = e.target;
         if (!(target instanceof HTMLInputElement)) return;
-        if (e.key === "Enter") state.setThumbValue(0, Number(target.value));
+        if (e.key === "Enter") state?.setThumbValue(0, Number(target.value));
       }}
       onKeyUp={(e) => {
         if (e.key === "Enter") formRef.current?.requestSubmit();
@@ -130,6 +130,7 @@ function SliderNumberField({
 
 function StyledSliderTrack({ children }: { children: ReactNode }) {
   const state = useContext(SliderStateContext);
+  if (!state) return null;
 
   return (
     <SliderTrack
@@ -137,7 +138,7 @@ function StyledSliderTrack({ children }: { children: ReactNode }) {
       style={
         {
           "--progress": `${
-            (state.getThumbValue(0) / state.getThumbMaxValue(0)) * 100
+            (state?.getThumbValue(0) / state?.getThumbMaxValue(0)) * 100
           }%`,
         } as CSSProperties
       }
