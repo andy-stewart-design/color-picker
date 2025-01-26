@@ -1,3 +1,9 @@
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
 .form {
   position: relative;
   display: grid;
@@ -7,7 +13,6 @@
   padding-block-start: 0.5rem;
   padding-block-end: 1.5rem;
   z-index: 1000;
-  background: white;
 
   &::before {
     content: "";
@@ -29,8 +34,22 @@
   }
 
   @media (width >= 560px) {
-    min-height: 100svh;
+    /* min-height: 100svh; */
     padding-inline: 1.5rem;
     padding-block: 2rem;
+  }
+}
+
+.exportTrigger {
+  display: grid;
+  padding: 2rem;
+
+  button {
+    font-weight: 500;
+    color: var(--color-primary-100);
+    background: var(--color-primary-900);
+    border: none;
+    border-radius: 100vmax;
+    padding: 1rem;
   }
 }

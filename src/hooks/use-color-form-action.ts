@@ -86,4 +86,5 @@ function validateFormData(
       : previousState.keyIndex,
   };
 }
+
 export { useColorFormAction };

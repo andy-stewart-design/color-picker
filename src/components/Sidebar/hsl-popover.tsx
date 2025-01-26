@@ -3,7 +3,7 @@ import { formatHex } from "culori";
 import { Button, Dialog, DialogTrigger, Popover } from "react-aria-components";
 import RangeSlider from "@/components/RangeSlider";
 import { useFormContext } from "@/components/Providers/FormProvider";
-import { useHSLContext } from "@/components/ColorForm/hsl-provider";
+import { useHSLContext } from "@/components/Sidebar/hsl-provider";
 import s from "./popover.module.css";
 
 interface Props {

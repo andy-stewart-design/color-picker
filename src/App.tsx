@@ -1,12 +1,15 @@
 import { useEffect, useMemo } from "react";
 import { formatHex } from "culori";
+import { Root as DialogRoot } from "@radix-ui/react-dialog";
 import Providers from "@/components/Providers";
-import ColorForm from "@/components/ColorForm";
+import Sidebar from "@/components/Sidebar";
 import ColorGrid from "@/components/ColorGrid";
 import { roundTo } from "@/utils/math";
 import { useSetGlobalColorVariables } from "@/hooks/use-set-global-color-variables";
 import { useColorFormAction } from "@/hooks/use-color-form-action";
 import s from "./app.module.css";
+import ExportDialog from "./components/ExportDialog";
+import { generateColorNames } from "./utils/generate-color-names";
 
 export interface ColorDefinition {
   hex: string;
@@ -50,25 +53,32 @@ function App() {
     });
   }, [lightnessArray, formValue]);
 
+  const intergerNames = generateColorNames(spectrum.length);
+
   useSetLocalStorage(
     "keyColor",
     JSON.stringify({ ...formValue, keyIndex: lightnessArray.keyIndex })
   );
+
   useSetGlobalColorVariables(formValue.h, formValue.s);
 
   return (
     <Providers>
-      <main className={s.main}>
-        <ColorForm
-          action={formAction}
-          formState={{ ...formValue, keyIndex: lightnessArray.keyIndex }}
-        />
-        <ColorGrid
-          colors={spectrum}
-          numColors={formValue.numColors}
-          keyIndex={lightnessArray.keyIndex}
-        />
-      </main>
+      <DialogRoot>
+        <main className={s.main}>
+          <Sidebar
+            action={formAction}
+            formState={{ ...formValue, keyIndex: lightnessArray.keyIndex }}
+          />
+          <ColorGrid
+            colors={spectrum}
+            colorNames={intergerNames}
+            numColors={formValue.numColors}
+            keyIndex={lightnessArray.keyIndex}
+          />
+        </main>
+        <ExportDialog colors={spectrum} names={intergerNames} />
+      </DialogRoot>
     </Providers>
   );
 }

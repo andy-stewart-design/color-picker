@@ -5,12 +5,19 @@ import { useRef, useState } from "react";
 
 interface Props {
   color: ColorDefinition | undefined;
+  name: number;
   isKeyIndex: boolean;
   showIndicator?: boolean;
   disabled: boolean;
 }
 
-function ColorCard({ color, isKeyIndex, showIndicator, disabled }: Props) {
+function ColorCard({
+  color,
+  name,
+  isKeyIndex,
+  showIndicator,
+  disabled,
+}: Props) {
   const style = color
     ? {
         backgroundColor: color.hex,
@@ -26,7 +33,7 @@ function ColorCard({ color, isKeyIndex, showIndicator, disabled }: Props) {
   return (
     <div className={s.card} style={style} data-active={color ? true : false}>
       <div className={s.hex}>
-        <HexButton hex={color?.hex} disabled={disabled} />
+        <HexButton hex={color?.hex} name={name} disabled={disabled} />
       </div>
       {showIndicator && (
         <div className={s.indicators}>
@@ -46,7 +53,15 @@ function ColorCard({ color, isKeyIndex, showIndicator, disabled }: Props) {
   );
 }
 
-function HexButton({ hex, disabled }: { hex?: string; disabled: boolean }) {
+function HexButton({
+  hex,
+  name,
+  disabled,
+}: {
+  hex?: string;
+  name: number;
+  disabled: boolean;
+}) {
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [success, setSuccess] = useState(false);
 
@@ -64,7 +79,7 @@ function HexButton({ hex, disabled }: { hex?: string; disabled: boolean }) {
 
   return (
     <button onClick={handleClick} disabled={disabled}>
-      {success ? "Copied!" : hex ? hex : "#000000"}
+      {name}: {success ? "Copied!" : hex ? hex : "#000000"}
     </button>
   );
 }

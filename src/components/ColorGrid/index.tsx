@@ -6,11 +6,12 @@ import s from "./style.module.css";
 
 interface Props {
   colors: ColorDefinition[];
+  colorNames: number[];
   numColors: number;
   keyIndex: number;
 }
 
-function ColorGrid({ colors, numColors, keyIndex }: Props) {
+function ColorGrid({ colors, colorNames, numColors, keyIndex }: Props) {
   const [showIndicators, setShowIndicators] = useState(false);
   const activeRows = Array.from({ length: numColors }, () => "1fr");
   const inactiveRows = Array.from({ length: 23 - numColors }, () => "0fr");
@@ -56,6 +57,7 @@ function ColorGrid({ colors, numColors, keyIndex }: Props) {
           >
             <ColorCard
               color={colors[index]}
+              name={colorNames[index]}
               isKeyIndex={index === keyIndex}
               showIndicator={showIndicators}
               disabled={index >= numColors}

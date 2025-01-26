@@ -6,7 +6,7 @@ import {
   type Dispatch,
   type SetStateAction,
 } from "react";
-import HSLPopover from "@/components/ColorForm/hsl-popover";
+import HSLPopover from "@/components/Sidebar/hsl-popover";
 import { useFormContext } from "@/components/Providers/FormProvider";
 import type { ColorFormValues } from "@/App";
 import s from "./style.module.css";
