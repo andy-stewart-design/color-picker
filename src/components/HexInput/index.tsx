@@ -1,13 +1,13 @@
 import { useActiveInputContext } from "@/components/Providers/ActiveInput";
-import {
-  type KeyboardEvent,
-  type ChangeEvent,
-  type ReactNode,
-  type Dispatch,
-  type SetStateAction,
-} from "react";
 import HSLPopover from "@/components/Sidebar/hsl-popover";
 import { useFormContext } from "@/components/Providers/FormProvider";
+import type {
+  KeyboardEvent,
+  ChangeEvent,
+  ReactNode,
+  Dispatch,
+  SetStateAction,
+} from "react";
 import type { ColorFormValues } from "@/App";
 import s from "./style.module.css";
 import { useMeasure } from "@/hooks/use-measure";
@@ -104,16 +104,18 @@ function HexInput({ id, name, defaultValue, setSwatchColor }: HexInputProps) {
   }
 
   return (
-    <input
-      id={id}
-      className={s.input}
-      name={name}
-      onChange={handleHexChange}
-      onKeyDown={handleKeyDown}
-      defaultValue={defaultValue}
-      spellCheck={false}
-      autoFocus={activeInput.current === "hex" ? true : undefined}
-    />
+    <>
+      <input
+        id={id}
+        className={s.input}
+        name={name}
+        onChange={handleHexChange}
+        onKeyDown={handleKeyDown}
+        defaultValue={defaultValue}
+        spellCheck={false}
+        autoFocus={activeInput.current === "hex" ? true : undefined}
+      />
+    </>
   );
 }
 

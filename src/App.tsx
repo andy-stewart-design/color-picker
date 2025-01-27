@@ -10,6 +10,7 @@ import { useColorFormAction } from "@/hooks/use-color-form-action";
 import s from "./app.module.css";
 import ExportDialog from "./components/ExportDialog";
 import { generateColorNames } from "./utils/generate-color-names";
+import { useActionContext } from "./components/Providers/ActionProvider";
 
 export interface ColorDefinition {
   hex: string;
@@ -25,6 +26,8 @@ export interface ColorFormValues extends ColorDefinition {
 
 function App() {
   const [formValue, formAction] = useColorFormAction();
+  const { color, colorAction } = useActionContext();
+  console.log(color, colorAction);
 
   const lightnessArray = useMemo(() => {
     return createLinearDistribution(
@@ -63,27 +66,33 @@ function App() {
   useSetGlobalColorVariables(formValue.h, formValue.s);
 
   return (
+    <DialogRoot>
+      <main className={s.main}>
+        <Sidebar
+          action={formAction}
+          formState={{ ...formValue, keyIndex: lightnessArray.keyIndex }}
+        />
+        <ColorGrid
+          colors={spectrum}
+          colorNames={intergerNames}
+          numColors={formValue.numColors}
+          keyIndex={lightnessArray.keyIndex}
+        />
+      </main>
+      <ExportDialog colors={spectrum} names={intergerNames} />
+    </DialogRoot>
+  );
+}
+
+function Layout() {
+  return (
     <Providers>
-      <DialogRoot>
-        <main className={s.main}>
-          <Sidebar
-            action={formAction}
-            formState={{ ...formValue, keyIndex: lightnessArray.keyIndex }}
-          />
-          <ColorGrid
-            colors={spectrum}
-            colorNames={intergerNames}
-            numColors={formValue.numColors}
-            keyIndex={lightnessArray.keyIndex}
-          />
-        </main>
-        <ExportDialog colors={spectrum} names={intergerNames} />
-      </DialogRoot>
+      <App />
     </Providers>
   );
 }
 
-export default App;
+export default Layout;
 
 function createLinearDistribution(
   seed: number,
