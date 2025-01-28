@@ -67,23 +67,20 @@ function validateFormData(
   formData: FormData,
   previousState: ColorFormValues
 ): ColorFormValues {
-  const hex = formData.get("hex");
-  const hue = formData.get("hue");
-  const saturation = formData.get("saturation");
-  const lightness = formData.get("lightness");
-  const numColors = formData.get("numColors");
-  const keyIndex = formData.get("keyIndex");
+  const d = Object.fromEntries(formData);
 
   return {
-    hex: isOfType("string", hex) ? hex : previousState.hex,
-    h: isOfType("string", hue) ? Number(hue) : previousState.h,
-    s: isOfType("string", saturation) ? Number(saturation) : previousState.s,
-    l: isOfType("string", lightness) ? Number(lightness) : previousState.l,
-    numColors: isOfType("string", numColors)
-      ? Number(numColors)
+    hex: isOfType("string", d.hex) ? d.hex : previousState.hex,
+    h: isOfType("string", d.hue) ? Number(d.hue) : previousState.h,
+    s: isOfType("string", d.saturation)
+      ? Number(d.saturation)
+      : previousState.s,
+    l: isOfType("string", d.lightness) ? Number(d.lightness) : previousState.l,
+    numColors: isOfType("string", d.numColors)
+      ? Number(d.numColors)
       : previousState.numColors,
-    keyIndex: isOfType("string", keyIndex)
-      ? Number(keyIndex)
+    keyIndex: isOfType("string", d.keyIndex)
+      ? Number(d.keyIndex)
       : previousState.keyIndex,
   };
 }

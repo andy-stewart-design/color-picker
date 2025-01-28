@@ -7,17 +7,13 @@ import {
   Title,
   Close,
 } from "@radix-ui/react-dialog";
-import { ColorDefinition } from "@/App";
+import { useActionContext } from "@/components/Providers/ActionProvider";
 import { generateCSS } from "@/utils/generate-color-code-snippets";
 import s from "./style.module.css";
 
-interface Props {
-  colors: ColorDefinition[];
-  names: number[];
-}
-
-export default function ExportDialog({ colors, names }: Props) {
-  const css = generateCSS(colors, names);
+export default function ExportDialog() {
+  const { colors, colorNames } = useActionContext();
+  const css = generateCSS(colors, colorNames);
 
   return (
     <Portal>

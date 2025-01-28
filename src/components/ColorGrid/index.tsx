@@ -1,20 +1,17 @@
 import { useEffect, useState, type CSSProperties } from "react";
 import ColorCard from "@/components/ColorCard";
+import { useActionContext } from "@/components/Providers/ActionProvider";
 import { CARD_IDS } from "@/constants";
-import type { ColorDefinition } from "@/App";
 import s from "./style.module.css";
 
-interface Props {
-  colors: ColorDefinition[];
-  colorNames: number[];
-  numColors: number;
-  keyIndex: number;
-}
-
-function ColorGrid({ colors, colorNames, numColors, keyIndex }: Props) {
+function ColorGrid() {
+  const { keyColor, colors, colorNames } = useActionContext();
   const [showIndicators, setShowIndicators] = useState(false);
-  const activeRows = Array.from({ length: numColors }, () => "1fr");
-  const inactiveRows = Array.from({ length: 23 - numColors }, () => "0fr");
+  const activeRows = Array.from({ length: keyColor.numColors }, () => "1fr");
+  const inactiveRows = Array.from(
+    { length: 23 - keyColor.numColors },
+    () => "0fr"
+  );
 
   useEffect(() => {
     function handleKeydown(e: KeyboardEvent) {
@@ -37,7 +34,7 @@ function ColorGrid({ colors, colorNames, numColors, keyIndex }: Props) {
         style={
           {
             gridTemplateRows: [...activeRows, ...inactiveRows].join(" "),
-            "--num-colors": numColors,
+            "--num-colors": keyColor.numColors,
           } as CSSProperties
         }
       >
@@ -53,14 +50,14 @@ function ColorGrid({ colors, colorNames, numColors, keyIndex }: Props) {
                 "--background": colors[index] ? colors[index].hex : "black",
               } as CSSProperties
             }
-            data-active={index < numColors}
+            data-active={index < keyColor.numColors}
           >
             <ColorCard
               color={colors[index]}
               name={colorNames[index]}
-              isKeyIndex={index === keyIndex}
+              isKeyIndex={index === keyColor.keyIndex}
               showIndicator={showIndicators}
-              disabled={index >= numColors}
+              disabled={index >= keyColor.numColors}
             />
           </div>
         ))}

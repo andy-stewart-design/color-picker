@@ -8,13 +8,9 @@ import { useFormContext } from "@/components/Providers/FormProvider";
 import { useActionContext } from "../Providers/ActionProvider";
 import s from "./style.module.css";
 
-interface Props {
-  keyIndex: number;
-}
-
-function Sidebar({ keyIndex }: Props) {
-  const { color, updateColor } = useActionContext();
-  const [swatchColor, setSwatchColor] = useState(`#${color.hex}`);
+function Sidebar() {
+  const { keyColor, updateColor } = useActionContext();
+  const [swatchColor, setSwatchColor] = useState(`#${keyColor.hex}`);
   const formRef = useFormContext();
 
   function onSubmit(event: React.FormEvent) {
@@ -23,18 +19,18 @@ function Sidebar({ keyIndex }: Props) {
 
   return (
     <div className={s.sidebar}>
-      <HSLProvider defaultValues={color}>
+      <HSLProvider defaultValues={keyColor}>
         <form className={s.form} onSubmit={onSubmit} ref={formRef}>
           <KeyColorInput
-            systemValues={color}
+            systemValues={keyColor}
             swatchColor={swatchColor}
             setSwatchColor={setSwatchColor}
           />
-          <HSLHiddenInputs systemValues={color} />
+          <HSLHiddenInputs systemValues={keyColor} />
           <NumberInput
-            key={`numColors-${color.numColors}`}
+            key={`numColors-${keyColor.numColors}`}
             name="numColors"
-            defaultValue={color.numColors}
+            defaultValue={keyColor.numColors}
             min={3}
             max={23}
             onSubmit={() => updateColor("numColors")}
@@ -42,11 +38,11 @@ function Sidebar({ keyIndex }: Props) {
             Palette Size
           </NumberInput>
           <NumberInput
-            key={`keyIndex-${keyIndex}`}
+            key={`keyIndex-${keyColor.keyIndex}`}
             name="keyIndex"
-            defaultValue={keyIndex}
+            defaultValue={keyColor.keyIndex}
             min={0}
-            max={color.numColors - 1}
+            max={keyColor.numColors - 1}
             onSubmit={() => updateColor("keyIndex")}
           >
             Key Index
