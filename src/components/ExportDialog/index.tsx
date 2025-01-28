@@ -7,12 +7,12 @@ import {
   Title,
   Close,
 } from "@radix-ui/react-dialog";
-import { useActionContext } from "@/components/Providers/ActionProvider";
 import { generateCSS } from "@/utils/generate-color-code-snippets";
 import s from "./style.module.css";
+import { useColorContext } from "../Providers/ColorProvider";
 
 export default function ExportDialog() {
-  const { colors, colorNames } = useActionContext();
+  const { colors, colorNames } = useColorContext();
   const css = generateCSS(colors, colorNames);
 
   return (

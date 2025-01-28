@@ -7,10 +7,12 @@ import HSLHiddenInputs from "@/components/Sidebar/hsl-hidden-inputs";
 import { useFormContext } from "@/components/Providers/FormProvider";
 import { useActionContext } from "../Providers/ActionProvider";
 import s from "./style.module.css";
+import { useColorContext } from "../Providers/ColorProvider";
 
 function Sidebar() {
-  const { keyColor, updateColor } = useActionContext();
-  const [swatchColor, setSwatchColor] = useState(`#${keyColor.hex}`);
+  const { updateColor } = useActionContext();
+  const { colorFormData } = useColorContext();
+  const [swatchColor, setSwatchColor] = useState(`#${colorFormData.hex}`);
   const formRef = useFormContext();
 
   function onSubmit(event: React.FormEvent) {
@@ -19,18 +21,18 @@ function Sidebar() {
 
   return (
     <div className={s.sidebar}>
-      <HSLProvider defaultValues={keyColor}>
+      <HSLProvider defaultValues={colorFormData}>
         <form className={s.form} onSubmit={onSubmit} ref={formRef}>
           <KeyColorInput
-            systemValues={keyColor}
+            systemValues={colorFormData}
             swatchColor={swatchColor}
             setSwatchColor={setSwatchColor}
           />
-          <HSLHiddenInputs systemValues={keyColor} />
+          <HSLHiddenInputs systemValues={colorFormData} />
           <NumberInput
-            key={`numColors-${keyColor.numColors}`}
+            key={`numColors-${colorFormData.numColors}`}
             name="numColors"
-            defaultValue={keyColor.numColors}
+            defaultValue={colorFormData.numColors}
             min={3}
             max={23}
             onSubmit={() => updateColor("numColors")}
@@ -38,11 +40,11 @@ function Sidebar() {
             Palette Size
           </NumberInput>
           <NumberInput
-            key={`keyIndex-${keyColor.keyIndex}`}
+            key={`keyIndex-${colorFormData.keyIndex}`}
             name="keyIndex"
-            defaultValue={keyColor.keyIndex}
+            defaultValue={colorFormData.keyIndex}
             min={0}
-            max={keyColor.numColors - 1}
+            max={colorFormData.numColors - 1}
             onSubmit={() => updateColor("keyIndex")}
           >
             Key Index

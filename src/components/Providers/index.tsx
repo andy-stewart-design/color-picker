@@ -1,14 +1,17 @@
 import { ReactNode } from "react";
 import ActiveInputProvider from "./ActiveInput";
 import FormProvider from "./FormProvider";
-import ColorActionProvider from "./ActionProvider";
+import ActionProvider from "./ActionProvider";
+import ColorProvider from "./ColorProvider";
 
 function Providers({ children }: { children: ReactNode }) {
   return (
     <FormProvider>
-      <ColorActionProvider>
-        <ActiveInputProvider>{children}</ActiveInputProvider>
-      </ColorActionProvider>
+      <ActionProvider>
+        <ColorProvider>
+          <ActiveInputProvider>{children}</ActiveInputProvider>
+        </ColorProvider>
+      </ActionProvider>
     </FormProvider>
   );
 }
