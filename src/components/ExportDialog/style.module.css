@@ -40,7 +40,7 @@
   padding: 0.75rem 1rem 0.5rem;
 
   @media (width >= 480px) {
-    padding: 0.75rem 2rem 0.5rem;
+    padding: 0.75rem 1.5rem 0.5rem;
   }
 
   h2 {
@@ -61,10 +61,10 @@
 }
 
 .footer {
-  padding: 1.25rem 1rem 1.5rem;
+  padding: 1.5rem 1rem 1.5rem;
 
   @media (width >= 480px) {
-    padding: 1.25rem 2rem 1.5rem;
+    padding: 1.5rem 1.5rem 1.5rem;
   }
 
   button {
@@ -75,5 +75,6 @@
     border-radius: 100vmax;
     padding: 1rem;
     width: 100%;
+    cursor: pointer;
   }
 }

@@ -6,7 +6,6 @@ import {
   NumberField,
 } from "react-aria-components";
 import clsx from "clsx";
-import { useFormContext } from "../Providers/FormProvider";
 import { useActiveInputContext } from "@/components/Providers/ActiveInput";
 import type {
   ComponentPropsWithoutRef,
@@ -25,10 +24,18 @@ interface Props {
   defaultValue: NumberFieldProps["defaultValue"];
   min: NumberFieldProps["minValue"];
   max: NumberFieldProps["maxValue"];
+  onSubmit?: () => void;
 }
 
-function NumberInput({ name, defaultValue, label, children, min, max }: Props) {
-  const formRef = useFormContext();
+function NumberInput({
+  name,
+  defaultValue,
+  label,
+  onSubmit,
+  children,
+  min,
+  max,
+}: Props) {
   const activeInput = useActiveInputContext();
 
   function handleKeyUp(e: KeyboardEvent<Element>) {
@@ -54,8 +61,8 @@ function NumberInput({ name, defaultValue, label, children, min, max }: Props) {
   }
 
   function requestSubmit() {
-    activeInput.current = "numColors";
-    formRef.current?.requestSubmit();
+    activeInput.current = name;
+    onSubmit?.();
   }
 
   return (

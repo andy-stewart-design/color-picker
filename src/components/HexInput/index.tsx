@@ -1,6 +1,5 @@
 import { useActiveInputContext } from "@/components/Providers/ActiveInput";
 import HSLPopover from "@/components/Sidebar/hsl-popover";
-import { useFormContext } from "@/components/Providers/FormProvider";
 import type {
   KeyboardEvent,
   ChangeEvent,
@@ -11,6 +10,7 @@ import type {
 import type { ColorFormValues } from "@/App";
 import s from "./style.module.css";
 import { useMeasure } from "@/hooks/use-measure";
+import { useActionContext } from "../Providers/ActionProvider";
 
 // ------------------------------------------------
 // DEFAULT EXPORT: KEY COLOR INPUT
@@ -84,8 +84,8 @@ interface HexInputProps {
 }
 
 function HexInput({ id, name, defaultValue, setSwatchColor }: HexInputProps) {
-  const formRef = useFormContext();
   const activeInput = useActiveInputContext();
+  const { updateColor } = useActionContext();
 
   function handleKeyDown(e: KeyboardEvent<HTMLInputElement>) {
     if (e.key !== "Enter") return;
@@ -99,7 +99,8 @@ function HexInput({ id, name, defaultValue, setSwatchColor }: HexInputProps) {
       input.value = nextValue;
       activeInput.current = "hex";
       setSwatchColor(`#${nextValue}`);
-      formRef.current?.requestSubmit();
+
+      updateColor("hex");
     }
   }
 

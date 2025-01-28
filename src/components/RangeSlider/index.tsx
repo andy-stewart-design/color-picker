@@ -1,6 +1,5 @@
 import {
   useContext,
-  type RefObject,
   type KeyboardEvent,
   CSSProperties,
   ReactNode,
@@ -17,6 +16,7 @@ import {
   useSlottedContext,
 } from "react-aria-components";
 import { useActiveInputContext } from "@/components/Providers/ActiveInput";
+import { useActionContext } from "@/components/Providers/ActionProvider";
 import s from "./style.module.css";
 
 type Props = {
@@ -29,10 +29,10 @@ type Props = {
   step: number;
   onChange: (value: number) => void;
   onChangeEnd: (value: number) => void;
-  formRef: RefObject<HTMLFormElement | null>;
+  onKeyUp: (e: KeyboardEvent<Element>) => void;
 };
 
-function Slider({ variant, name, label, formRef, ...props }: Props) {
+function Slider({ variant, name, label, onKeyUp, ...props }: Props) {
   const activeInput = useActiveInputContext();
 
   function handleChange(value: number) {
@@ -43,7 +43,7 @@ function Slider({ variant, name, label, formRef, ...props }: Props) {
   function handleKeyUp(e: KeyboardEvent<Element>) {
     if (e.key === "ArrowRight" || e.key === "ArrowLeft") {
       activeInput.current = name;
-      formRef.current?.requestSubmit();
+      onKeyUp(e);
     }
   }
 
@@ -70,7 +70,7 @@ function Slider({ variant, name, label, formRef, ...props }: Props) {
       <div className={s.topRow}>
         <Label className={s.label}>{label}</Label>
         <SliderNumberField
-          formRef={formRef}
+          name={name}
           min={props.min}
           max={props.max}
           step={props.step}
@@ -91,18 +91,19 @@ function Slider({ variant, name, label, formRef, ...props }: Props) {
 }
 
 function SliderNumberField({
+  name,
   min,
   max,
   step,
-  formRef,
 }: {
+  name: string;
   min: number;
   max: number;
   step: number;
-  formRef: RefObject<HTMLFormElement | null>;
 }) {
   const state = useContext(SliderStateContext);
   const labelProps = useSlottedContext(LabelContext);
+  const { updateColor } = useActionContext();
 
   if (!labelProps) return null;
 
@@ -120,7 +121,9 @@ function SliderNumberField({
         if (e.key === "Enter") state?.setThumbValue(0, Number(target.value));
       }}
       onKeyUp={(e) => {
-        if (e.key === "Enter") formRef.current?.requestSubmit();
+        if (e.key === "Enter") {
+          updateColor(name);
+        }
       }}
     >
       <Input />

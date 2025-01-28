@@ -26,6 +26,7 @@
       .card[data-active="false"] & {
         opacity: 0;
       }
+      cursor: pointer;
     }
   }
 

@@ -4,8 +4,17 @@ import { hsl } from "@/utils/culori";
 import { isOfType } from "@/utils/type-guard";
 import type { ColorFormValues } from "@/App";
 
+type ColorActionType =
+  | "hex"
+  | "hue"
+  | "saturation"
+  | "lightness"
+  | "keyIndex"
+  | "numColors"
+  | (string & {});
+
 interface ColorAction {
-  type: "hex" | "hue" | "saturation" | "lightness" | "keyIndex" | "numColors";
+  type: ColorActionType;
   data: FormData;
 }
 
@@ -50,7 +59,7 @@ function colorReducer(state: ColorFormValues, action: ColorAction) {
     case "numColors":
       return data;
     default:
-      throw new Error("Invalid action type");
+      throw new Error(`${action.type} is not a valid action type`);
   }
 }
 
@@ -79,4 +88,4 @@ function validateFormData(
   };
 }
 
-export { colorReducer, type ColorAction };
+export { colorReducer, type ColorAction, type ColorActionType };

@@ -2,9 +2,9 @@ import { Dispatch, SetStateAction } from "react";
 import { formatHex } from "culori";
 import { Button, Dialog, DialogTrigger, Popover } from "react-aria-components";
 import RangeSlider from "@/components/RangeSlider";
-import { useFormContext } from "@/components/Providers/FormProvider";
 import { useHSLContext } from "@/components/Sidebar/hsl-provider";
 import s from "./popover.module.css";
+import { useActionContext } from "../Providers/ActionProvider";
 
 interface Props {
   systemValues: {
@@ -23,8 +23,8 @@ function HSLPopover({
   setSwatchColor,
   width,
 }: Props) {
-  const formRef = useFormContext();
   const { setHue, setSaturation, setLightness } = useHSLContext();
+  const { updateColor } = useActionContext();
 
   function updateCurrentColor(key: "h" | "s" | "l", value: number) {
     const currentHsl = {
@@ -67,10 +67,12 @@ function HSLPopover({
               setSwatchColor(updateCurrentColor("h", value));
             }}
             onChangeEnd={(value) => {
-              formRef.current?.requestSubmit();
+              updateColor("hue");
               setSwatchColor(updateCurrentColor("h", value));
             }}
-            formRef={formRef}
+            onKeyUp={() => {
+              updateColor("hue");
+            }}
           />
           <RangeSlider
             key={`modal-saturation-${systemValues.s}`}
@@ -86,10 +88,12 @@ function HSLPopover({
               setSwatchColor(updateCurrentColor("s", value));
             }}
             onChangeEnd={(value) => {
-              formRef.current?.requestSubmit();
+              updateColor("saturation");
               setSwatchColor(updateCurrentColor("s", value));
             }}
-            formRef={formRef}
+            onKeyUp={() => {
+              updateColor("saturation");
+            }}
           />
           <RangeSlider
             key={`modal-lightness-${systemValues.l}`}
@@ -105,10 +109,12 @@ function HSLPopover({
               setSwatchColor(updateCurrentColor("l", value));
             }}
             onChangeEnd={(value) => {
-              formRef.current?.requestSubmit();
+              updateColor("lightness");
               setSwatchColor(updateCurrentColor("l", value));
             }}
-            formRef={formRef}
+            onKeyUp={() => {
+              updateColor("lightness");
+            }}
           />
         </Dialog>
       </Popover>

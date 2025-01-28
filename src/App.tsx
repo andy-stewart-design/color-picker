@@ -4,13 +4,12 @@ import { Root as DialogRoot } from "@radix-ui/react-dialog";
 import Providers from "@/components/Providers";
 import Sidebar from "@/components/Sidebar";
 import ColorGrid from "@/components/ColorGrid";
+import { useActionContext } from "@/components/Providers/ActionProvider";
 import { roundTo } from "@/utils/math";
 import { useSetGlobalColorVariables } from "@/hooks/use-set-global-color-variables";
-import { useColorFormAction } from "@/hooks/use-color-form-action";
-import s from "./app.module.css";
 import ExportDialog from "./components/ExportDialog";
 import { generateColorNames } from "./utils/generate-color-names";
-import { useActionContext } from "./components/Providers/ActionProvider";
+import s from "./app.module.css";
 
 export interface ColorDefinition {
   hex: string;
@@ -25,57 +24,52 @@ export interface ColorFormValues extends ColorDefinition {
 }
 
 function App() {
-  const [formValue, formAction] = useColorFormAction();
-  const { color, colorAction } = useActionContext();
-  console.log(color, colorAction);
+  const { color } = useActionContext();
 
   const lightnessArray = useMemo(() => {
     return createLinearDistribution(
-      formValue.l,
-      formValue.numColors,
+      color.l,
+      color.numColors,
       0.9,
       0.05,
-      formValue.keyIndex
+      color.keyIndex
     );
-  }, [formValue]);
+  }, [color]);
 
   const spectrum = useMemo(() => {
     return lightnessArray.range.map((value, index) => {
       const saturation = getSaturationValue(
         index,
         lightnessArray.keyIndex,
-        formValue.s
+        color.s
       );
 
-      const HSL = { h: formValue.h, s: saturation, l: value };
+      const HSL = { h: color.h, s: saturation, l: value };
 
       return {
         ...HSL,
         hex: formatHex({ mode: "hsl", ...HSL }),
       };
     });
-  }, [lightnessArray, formValue]);
+  }, [lightnessArray, color]);
 
   const intergerNames = generateColorNames(spectrum.length);
 
   useSetLocalStorage(
     "keyColor",
-    JSON.stringify({ ...formValue, keyIndex: lightnessArray.keyIndex })
+    JSON.stringify({ ...color, keyIndex: lightnessArray.keyIndex })
   );
 
-  useSetGlobalColorVariables(formValue.h, formValue.s);
+  useSetGlobalColorVariables(color.h, color.s);
 
   return (
     <DialogRoot>
       <main className={s.main}>
-        <Sidebar
-          action={formAction}
-          formState={{ ...formValue, keyIndex: lightnessArray.keyIndex }}
-        />
+        <Sidebar keyIndex={lightnessArray.keyIndex} />
         <ColorGrid
           colors={spectrum}
           colorNames={intergerNames}
-          numColors={formValue.numColors}
+          numColors={color.numColors}
           keyIndex={lightnessArray.keyIndex}
         />
       </main>

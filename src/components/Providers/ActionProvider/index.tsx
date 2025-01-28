@@ -1,38 +1,54 @@
 import type { ColorFormValues } from "@/App";
-import { createContext, ReactNode, useActionState, useContext } from "react";
-import { colorReducer, ColorAction } from "./action";
+import {
+  createContext,
+  ReactNode,
+  startTransition,
+  useActionState,
+  useContext,
+} from "react";
+import { colorReducer, type ColorAction, type ColorActionType } from "./action";
 import { DEFAULT_VALUES } from "@/constants";
+import { useFormContext } from "../FormProvider";
 
 interface ColorActionContextProps {
   color?: ColorFormValues;
-  colorAction?: (payload: ColorAction) => void;
+  updateColor?: (type: ColorActionType) => void;
 }
 
 const ColorActionContext = createContext<ColorActionContextProps>({});
 
 function ColorActionProvider({ children }: { children: ReactNode }) {
+  const formRef = useFormContext();
   const [color, colorAction] = useActionState<ColorFormValues, ColorAction>(
     colorReducer,
     DEFAULT_VALUES
   );
 
+  function updateColor(type: ColorActionType) {
+    if (!formRef.current) return;
+    const formData = new FormData(formRef.current);
+    startTransition(() => {
+      colorAction({ type, data: formData });
+    });
+  }
+
   return (
-    <ColorActionContext.Provider value={{ color, colorAction }}>
+    <ColorActionContext.Provider value={{ color, updateColor }}>
       {children}
     </ColorActionContext.Provider>
   );
 }
 
 function useActionContext() {
-  const { color, colorAction } = useContext(ColorActionContext);
+  const { color, updateColor } = useContext(ColorActionContext);
 
-  if (!color || !colorAction) {
+  if (!color || !updateColor) {
     throw new Error(
-      "color, colorAction cannot be accessed outside of an ColorActionProvider"
+      "color, updateColor cannot be accessed outside of an ColorActionProvider"
     );
   }
 
-  return { color, colorAction };
+  return { color, updateColor };
 }
 
 export default ColorActionProvider;

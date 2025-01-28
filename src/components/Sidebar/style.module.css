@@ -51,5 +51,6 @@
     border: none;
     border-radius: 100vmax;
     padding: 1rem;
+    cursor: pointer;
   }
 }
