@@ -34,8 +34,6 @@ function HSLProvider({ children, defaultValues }: HSLProviderProps) {
   const [saturation, setSaturation] = useState(defaultValues.s);
   const [lightness, setLightness] = useState(defaultValues.l);
 
-  // console.log("defaultValues match", defaultValues === previousSystemValue);
-
   if (defaultValues !== previousSystemValue) {
     setPreviousSystemValues(defaultValues);
     setHue((currentValue) => {
@@ -48,20 +46,6 @@ function HSLProvider({ children, defaultValues }: HSLProviderProps) {
       return currentValue !== defaultValues.l ? defaultValues.l : currentValue;
     });
   }
-
-  // useEffect(() => {
-  //   console.log("syncing values");
-
-  //   setHue((currentValue) => {
-  //     return currentValue !== defaultValues.h ? defaultValues.h : currentValue;
-  //   });
-  //   setSaturation((currentValue) => {
-  //     return currentValue !== defaultValues.s ? defaultValues.s : currentValue;
-  //   });
-  //   setLightness((currentValue) => {
-  //     return currentValue !== defaultValues.l ? defaultValues.l : currentValue;
-  //   });
-  // }, [defaultValues]);
 
   return (
     <HSLContext.Provider
