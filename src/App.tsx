@@ -5,18 +5,6 @@ import ColorGrid from "@/components/ColorGrid";
 import ExportDialog from "@/components/ExportDialog";
 import s from "./app.module.css";
 
-export interface ColorDefinition {
-  hex: string;
-  h: number;
-  s: number;
-  l: number;
-}
-
-export interface ColorFormValues extends ColorDefinition {
-  numColors: number;
-  keyIndex: number;
-}
-
 function App() {
   return (
     <ExportDialogRoot>

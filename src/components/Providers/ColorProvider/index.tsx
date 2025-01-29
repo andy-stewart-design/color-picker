@@ -5,10 +5,10 @@ import { createLinearDistribution, getSaturationValue } from "@/utils/color";
 import { generateColorNames } from "@/utils/generate-color-names";
 import { useSetLocalStorage } from "@/hooks/use-set-local-storage";
 import { useSetGlobalColorVariables } from "@/hooks/use-set-global-color-variables";
-import type { ColorDefinition, ColorFormValues } from "@/App";
+import type { ColorDefinition, ColorFormValues } from "@/types";
 
 interface ColorContextProps {
-  colorFormData?: ColorFormValues;
+  colorData?: ColorFormValues;
   colors?: ColorDefinition[];
   colorNames?: number[];
 }
@@ -49,7 +49,7 @@ function ColorProvider({ children }: { children: ReactNode }) {
 
   return (
     <ColorContext.Provider
-      value={{ colorFormData: updatedFormData, colors: spectrum, colorNames }}
+      value={{ colorData: updatedFormData, colors: spectrum, colorNames }}
     >
       {children}
     </ColorContext.Provider>
@@ -57,15 +57,15 @@ function ColorProvider({ children }: { children: ReactNode }) {
 }
 
 function useColorContext() {
-  const { colorFormData, colors, colorNames } = useContext(ColorContext);
+  const { colorData, colors, colorNames } = useContext(ColorContext);
 
-  if (!colorFormData || !colors || !colorNames) {
+  if (!colorData || !colors || !colorNames) {
     throw new Error(
       "Color context values cannot be accessed outside of an ColorProvider"
     );
   }
 
-  return { colorFormData, colors, colorNames };
+  return { colorData, colors, colorNames };
 }
 
 export default ColorProvider;

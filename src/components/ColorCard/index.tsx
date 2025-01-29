@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import type { ColorDefinition } from "@/App";
+import type { ColorDefinition } from "@/types";
 import s from "./style.module.css";
 import { useRef, useState } from "react";
 

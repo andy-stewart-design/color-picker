@@ -1,4 +1,4 @@
-import { ColorDefinition } from "@/App";
+import { ColorDefinition } from "@/types";
 
 export function generateCSS(colors: ColorDefinition[], names: number[]) {
   const openingTag = ":where(html) {";
