@@ -5,10 +5,10 @@ import { createLinearDistribution, getSaturationValue } from "@/utils/color";
 import { generateColorNames } from "@/utils/generate-color-names";
 import { useSetLocalStorage } from "@/hooks/use-set-local-storage";
 import { useSetGlobalColorVariables } from "@/hooks/use-set-global-color-variables";
-import type { ColorDefinition, ColorFormValues } from "@/types";
+import type { ColorDefinition, ColorFormData } from "@/types";
 
 interface ColorContextProps {
-  colorData?: ColorFormValues;
+  colorData?: ColorFormData;
   colors?: ColorDefinition[];
   colorNames?: number[];
 }

@@ -13,6 +13,7 @@
   --grid-transition-easing: cubic-bezier(0.33, 1, 0.68, 1);
 
   display: grid;
+  grid-template-rows: var(--gtr);
   overflow: clip;
   min-height: 100%;
   transition: grid-template-rows var(--grid-transition-duration)
@@ -24,6 +25,8 @@
 
 .cardWrapper {
   --bg: black;
+  display: grid;
+  overflow: hidden;
   background: var(--bg);
   transition: background var(--grid-transition-duration)
     var(--grid-transition-easing);

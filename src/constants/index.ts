@@ -1,4 +1,4 @@
-import { ColorFormValues } from "@/App";
+import { ColorFormData } from "@/types";
 import { roundTo } from "@/utils/math";
 
 const keyColor = getKeyColor();
@@ -13,8 +13,11 @@ const DEFAULT_VALUES = {
 };
 
 const CARD_IDS = Array.from({ length: 23 }, () => crypto.randomUUID());
+const GRID_ROWS = Array.from({ length: 23 }, () => ({
+  id: crypto.randomUUID(),
+}));
 
-export { DEFAULT_VALUES, CARD_IDS };
+export { DEFAULT_VALUES, CARD_IDS, GRID_ROWS };
 
 // -------------------------------------------------------
 // HELPER FUNCTIONS
@@ -22,5 +25,5 @@ export { DEFAULT_VALUES, CARD_IDS };
 
 function getKeyColor() {
   const keyColorRaw = localStorage.getItem("keyColor");
-  return keyColorRaw ? (JSON.parse(keyColorRaw) as ColorFormValues) : undefined;
+  return keyColorRaw ? (JSON.parse(keyColorRaw) as ColorFormData) : undefined;
 }

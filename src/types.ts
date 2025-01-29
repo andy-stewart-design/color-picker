@@ -5,7 +5,7 @@ export interface ColorDefinition {
   l: number;
 }
 
-export interface ColorFormValues extends ColorDefinition {
+export interface ColorFormData extends ColorDefinition {
   numColors: number;
   keyIndex: number;
 }

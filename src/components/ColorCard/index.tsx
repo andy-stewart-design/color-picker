@@ -79,7 +79,7 @@ function HexButton({
 
   return (
     <button onClick={handleClick} disabled={disabled}>
-      {name}: {success ? "Copied!" : hex ? hex : "#000000"}
+      {name ?? "000"}: {success ? "Copied!" : hex ? hex : "#000000"}
     </button>
   );
 }

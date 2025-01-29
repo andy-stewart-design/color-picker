@@ -1,43 +1,21 @@
-import { useEffect, useState, type CSSProperties } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import ColorCard from "@/components/ColorCard";
 import { useColorContext } from "@/components/Providers/ColorProvider";
-import { CARD_IDS } from "@/constants";
+import { GRID_ROWS } from "@/constants";
 import s from "./style.module.css";
 
 function ColorGrid() {
   const { colorData, colors, colorNames } = useColorContext();
   const showIndicators = useToggleIndicators();
 
-  const activeRows = Array.from({ length: colorData.numColors }, () => "1fr");
-  const inactiveRows = Array.from(
-    { length: 23 - colorData.numColors },
-    () => "0fr"
-  );
-
   return (
     <section className={s.gridWrapper}>
-      <div
-        className={s.grid}
-        style={
-          {
-            gridTemplateRows: [...activeRows, ...inactiveRows].join(" "),
-            "--num-colors": colorData.numColors,
-          } as CSSProperties
-        }
-      >
-        {Array.from({ length: 23 }, (_, i) => i).map((index) => (
-          <div
-            key={CARD_IDS[index]}
-            data-index={index}
-            className={s.cardWrapper}
-            style={
-              {
-                display: "grid",
-                overflow: "hidden",
-                "--background": colors[index] ? colors[index].hex : "black",
-              } as CSSProperties
-            }
-            data-active={index < colorData.numColors}
+      <Grid numColors={colorData.numColors}>
+        {GRID_ROWS.map(({ id }, index) => (
+          <GridRow
+            key={id}
+            color={colors[index]?.hex}
+            disabled={index >= colorData.numColors}
           >
             <ColorCard
               color={colors[index]}
@@ -46,14 +24,63 @@ function ColorGrid() {
               showIndicator={showIndicators}
               disabled={index >= colorData.numColors}
             />
-          </div>
+          </GridRow>
         ))}
-      </div>
+      </Grid>
     </section>
   );
 }
 
 export default ColorGrid;
+
+// ----------------------------------------------------------------
+// CHILD COMPONENTS
+// ----------------------------------------------------------------
+function Grid({
+  numColors,
+  children,
+}: {
+  numColors: number;
+  children: ReactNode;
+}) {
+  const activeRows = Array.from({ length: numColors }, () => "1fr");
+  const inactiveRows = Array.from({ length: 23 - numColors }, () => "0fr");
+
+  return (
+    <div
+      className={s.grid}
+      style={{
+        "--gtr": [...activeRows, ...inactiveRows].join(" "),
+        "--num-colors": numColors,
+      }}
+    >
+      {children}
+    </div>
+  );
+}
+
+function GridRow({
+  color,
+  disabled,
+  children,
+}: {
+  color?: string;
+  disabled: boolean;
+  children: ReactNode;
+}) {
+  return (
+    <div
+      className={s.cardWrapper}
+      style={{
+        "--background": color ? color : "black",
+      }}
+      data-active={!disabled}
+      aria-hidden={disabled ? "true" : undefined}
+    >
+      {children}
+    </div>
+  );
+}
 
 // ----------------------------------------------------------------
 // HELPER FUNTIONS
