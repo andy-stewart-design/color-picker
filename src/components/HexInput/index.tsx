@@ -7,7 +7,7 @@ import type {
   Dispatch,
   SetStateAction,
 } from "react";
-import type { ColorFormValues } from "@/App";
+import type { ColorFormData } from "@/types";
 import s from "./style.module.css";
 import { useMeasure } from "@/hooks/use-measure";
 import { useActionContext } from "../Providers/ActionProvider";
@@ -17,7 +17,7 @@ import { useActionContext } from "../Providers/ActionProvider";
 // ------------------------------------------------
 
 interface KeyColorInputProps {
-  systemValues: ColorFormValues;
+  systemValues: ColorFormData;
   swatchColor: string;
   setSwatchColor: Dispatch<SetStateAction<string>>;
 }

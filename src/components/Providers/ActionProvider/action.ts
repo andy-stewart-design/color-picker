@@ -2,7 +2,7 @@
 import { formatHex } from "culori";
 import { hsl } from "@/utils/culori";
 import { isOfType } from "@/utils/type-guard";
-import type { ColorFormValues } from "@/App";
+import type { ColorFormData } from "@/types";
 
 type ColorActionType =
   | "hex"
@@ -18,7 +18,7 @@ interface ColorAction {
   data: FormData;
 }
 
-function colorReducer(state: ColorFormValues, action: ColorAction) {
+function colorReducer(state: ColorFormData, action: ColorAction) {
   const data = validateFormData(action.data, state);
 
   switch (action.type) {
@@ -65,8 +65,8 @@ function colorReducer(state: ColorFormValues, action: ColorAction) {
 
 function validateFormData(
   formData: FormData,
-  previousState: ColorFormValues
-): ColorFormValues {
+  previousState: ColorFormData
+): ColorFormData {
   const d = Object.fromEntries(formData);
 
   return {

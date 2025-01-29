@@ -8,10 +8,10 @@ import {
 import { DEFAULT_VALUES } from "@/constants";
 import { useFormContext } from "@/components/Providers/FormProvider";
 import { colorReducer, type ColorAction, type ColorActionType } from "./action";
-import type { ColorFormValues } from "@/App";
+import type { ColorFormData } from "@/types";
 
 interface ColorActionContextProps {
-  formData?: ColorFormValues;
+  formData?: ColorFormData;
   updateColor?: (type: ColorActionType) => void;
 }
 
@@ -20,7 +20,7 @@ const ActionContext = createContext<ColorActionContextProps>({});
 function ActionProvider({ children }: { children: ReactNode }) {
   const formRef = useFormContext();
 
-  const [formData, colorAction] = useActionState<ColorFormValues, ColorAction>(
+  const [formData, colorAction] = useActionState<ColorFormData, ColorAction>(
     colorReducer,
     DEFAULT_VALUES
   );
