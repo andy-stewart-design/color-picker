@@ -2,6 +2,7 @@ import clsx from "clsx";
 import type { ColorDefinition } from "@/types";
 import s from "./style.module.css";
 import { useRef, useState } from "react";
+import VisuallyHidden from "../VisuallyHidden";
 
 interface Props {
   color: ColorDefinition | undefined;
@@ -34,6 +35,21 @@ function ColorCard({
     <div className={s.card} style={style} data-active={color ? true : false}>
       <div className={s.hex}>
         <HexButton hex={color?.hex} name={name} disabled={disabled} />
+        {isKeyIndex && (
+          <div className={s.check} aria-hidden="true">
+            <svg viewBox="0 0 20 20" width={20} height={20}>
+              <path
+                d="M 5 10 L 9 14.5 L 15 5.5"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={2}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+            <VisuallyHidden>Key Index</VisuallyHidden>
+          </div>
+        )}
       </div>
       {showIndicator && (
         <div className={s.indicators}>

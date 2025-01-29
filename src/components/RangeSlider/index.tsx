@@ -1,9 +1,4 @@
-import {
-  useContext,
-  type KeyboardEvent,
-  CSSProperties,
-  ReactNode,
-} from "react";
+import { useContext, type ReactNode, type KeyboardEvent } from "react";
 import {
   Label,
   Slider as SliderGroup,
@@ -61,11 +56,9 @@ function Slider({ variant, name, label, onKeyUp, ...props }: Props) {
       onChange={handleChange}
       onChangeEnd={handleChangeEnd}
       data-variant={variant ?? "default"}
-      style={
-        {
-          "--progress": `${(props.defaultValue / props.max) * 100}%`,
-        } as CSSProperties
-      }
+      style={{
+        "--progress": `${(props.defaultValue / props.max) * 100}%`,
+      }}
     >
       <div className={s.topRow}>
         <Label className={s.label}>{label}</Label>
@@ -138,13 +131,11 @@ function StyledSliderTrack({ children }: { children: ReactNode }) {
   return (
     <SliderTrack
       className={s.track}
-      style={
-        {
-          "--progress": `${
-            (state?.getThumbValue(0) / state?.getThumbMaxValue(0)) * 100
-          }%`,
-        } as CSSProperties
-      }
+      style={{
+        "--progress": `${
+          (state?.getThumbValue(0) / state?.getThumbMaxValue(0)) * 100
+        }%`,
+      }}
     >
       {children}
     </SliderTrack>

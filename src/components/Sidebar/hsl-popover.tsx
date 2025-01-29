@@ -3,8 +3,8 @@ import { formatHex } from "culori";
 import { Button, Dialog, DialogTrigger, Popover } from "react-aria-components";
 import RangeSlider from "@/components/RangeSlider";
 import { useHSLContext } from "@/components/Sidebar/hsl-provider";
+import { useActionContext } from "@/components/Providers/ActionProvider";
 import s from "./popover.module.css";
-import { useActionContext } from "../Providers/ActionProvider";
 
 interface Props {
   systemValues: {
@@ -26,7 +26,7 @@ function HSLPopover({
   const { setHue, setSaturation, setLightness } = useHSLContext();
   const { updateColor } = useActionContext();
 
-  function updateCurrentColor(key: "h" | "s" | "l", value: number) {
+  function hslToHex(key: "h" | "s" | "l", value: number) {
     const currentHsl = {
       h: systemValues.h,
       s: systemValues.s,
@@ -64,11 +64,11 @@ function HSLPopover({
             step={0.01}
             onChange={(value) => {
               setHue(value);
-              setSwatchColor(updateCurrentColor("h", value));
+              setSwatchColor(hslToHex("h", value));
             }}
             onChangeEnd={(value) => {
               updateColor("hue");
-              setSwatchColor(updateCurrentColor("h", value));
+              setSwatchColor(hslToHex("h", value));
             }}
             onKeyUp={() => {
               updateColor("hue");
@@ -85,11 +85,11 @@ function HSLPopover({
             step={0.01}
             onChange={(value) => {
               setSaturation(value);
-              setSwatchColor(updateCurrentColor("s", value));
+              setSwatchColor(hslToHex("s", value));
             }}
             onChangeEnd={(value) => {
               updateColor("saturation");
-              setSwatchColor(updateCurrentColor("s", value));
+              setSwatchColor(hslToHex("s", value));
             }}
             onKeyUp={() => {
               updateColor("saturation");
@@ -106,11 +106,11 @@ function HSLPopover({
             step={0.01}
             onChange={(value) => {
               setLightness(value);
-              setSwatchColor(updateCurrentColor("l", value));
+              setSwatchColor(hslToHex("l", value));
             }}
             onChangeEnd={(value) => {
               updateColor("lightness");
-              setSwatchColor(updateCurrentColor("l", value));
+              setSwatchColor(hslToHex("l", value));
             }}
             onKeyUp={() => {
               updateColor("lightness");

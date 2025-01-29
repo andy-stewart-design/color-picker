@@ -19,8 +19,12 @@
   transition: grid-template-rows var(--grid-transition-duration)
     var(--grid-transition-easing);
   padding-bottom: 1.25rem;
-  /* background: var(--color-primary-900); */
   background: black;
+  background: var(--color-primary-900);
+
+  @media (width >= 480px) {
+    padding-bottom: 0;
+  }
 }
 
 .cardWrapper {

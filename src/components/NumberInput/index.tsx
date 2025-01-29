@@ -39,9 +39,8 @@ function NumberInput({
   const activeInput = useActiveInputContext();
 
   function handleKeyUp(e: KeyboardEvent<Element>) {
-    if (e.key !== "Enter") return;
     const target = e.target;
-    if (!(target instanceof HTMLInputElement)) return;
+    if (e.key !== "Enter" || !(target instanceof HTMLInputElement)) return;
 
     const { value } = target;
     if (Number(value) !== defaultValue) {
@@ -61,8 +60,8 @@ function NumberInput({
   }
 
   function requestSubmit() {
-    activeInput.current = name;
     onSubmit?.();
+    activeInput.current = name;
   }
 
   return (
