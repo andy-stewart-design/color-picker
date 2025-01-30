@@ -1,16 +1,10 @@
 import { ColorDefinition } from "@/types";
-import { converter, formatRgb } from "culori";
-
-const rgb = converter("rgb");
+import { format } from "./culori";
 
 export function generateCSS(colors: ColorDefinition[], names: number[]) {
   const openingTag = ":where(html) {";
   const closingTag = "}";
-  const formattedColors = colors.map((color) => {
-    const RGB = rgb(color.hex);
-    if (!RGB) throw new Error("hgg");
-    return formatRgb(RGB);
-  });
+  const formattedColors = colors.map((color) => format(color.hex, "oklch"));
 
   const variables = formattedColors.map(
     (color, index) => `${space(3)}--color-primary-${names[index]}: ${color};`

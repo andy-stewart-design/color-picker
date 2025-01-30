@@ -39,7 +39,7 @@ function ColorCard({
           <div className={s.check} aria-hidden="true">
             <svg viewBox="0 0 20 20" width={20} height={20}>
               <path
-                d="M 5 10 L 9 14.5 L 15 5.5"
+                d="M 5 10 L 9 14 L 15 6"
                 fill="none"
                 stroke="currentColor"
                 strokeWidth={2}
