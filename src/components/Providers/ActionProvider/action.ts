@@ -2,6 +2,7 @@
 import { formatHex } from "culori";
 import { hsl } from "@/utils/culori";
 import { isOfType } from "@/utils/type-guard";
+import { COLOR_MODE } from "@/constants";
 import type { ColorFormData } from "@/types";
 
 type ColorActionType =
@@ -40,7 +41,7 @@ function colorReducer(state: ColorFormData, action: ColorAction) {
       const nextL = action.type === "lightness" ? data.l : state.l;
 
       const nextHex = formatHex({
-        mode: "hsl",
+        mode: COLOR_MODE,
         h: nextH,
         s: nextS,
         l: nextL,

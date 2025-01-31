@@ -56,25 +56,61 @@ function getDistributionParams(
   } else if (keyValue <= end) {
     return { keyIndex: length - 1, start, end: keyValue, keyValue };
   } else {
-    const step = (start - end) / (length - 1);
-    const rawIndex = (start - keyValue) / step;
-    const nextKeyIndex = Math.min(Math.floor(rawIndex), length - 2);
+    const stepSize = (end - start) / (length - 1);
+    const position = (keyValue - start) / stepSize;
+    const ki = Math.round(position);
 
-    return { keyIndex: nextKeyIndex, start, end, keyValue };
+    // const step = (start - end) / (length - 1);
+    // const rawIndex = (start - keyValue) / step;
+    // const nextKeyIndex = Math.min(Math.floor(rawIndex), length - 2);
+
+    return { keyIndex: ki, start, end, keyValue };
   }
 }
 
 function getSaturationValue(
   index: number,
   keyIndex: number,
-  keySaturation: number
+  keySaturation: number,
+  numSteps: number
 ) {
-  const minValue = Math.max(0, keySaturation - (keySaturation / 16) * keyIndex);
-  const maxValue = keySaturation;
-
-  const range = maxValue - minValue;
-  if (keyIndex === 0 || index <= keyIndex) return maxValue;
-  else return roundTo(maxValue - (range * (index - keyIndex)) / keyIndex, 4);
+  if (keyIndex === 0) {
+    const minValue = Math.max(0, keySaturation - keySaturation / 2);
+    const maxValue = keySaturation;
+    const range = maxValue - minValue;
+    const step = range / numSteps;
+    return roundTo(maxValue - step * index, 4);
+  } else {
+    const minValue = Math.max(
+      0,
+      keySaturation - (keySaturation / 8) * keyIndex
+    );
+    const maxValue = keySaturation;
+    const range = maxValue - minValue;
+    const minStep = range / keyIndex;
+    const maxStep = range / (numSteps - keyIndex);
+    if (index <= keyIndex) {
+      return roundTo(maxValue - minStep * (keyIndex - index), 4);
+    } else {
+      return roundTo(maxValue - maxStep * (index - keyIndex), 4);
+    }
+  }
 }
 
-export { createLinearDistribution, getSaturationValue };
+export { createLinearDistribution, getDistributionParams, getSaturationValue };
+
+// function findStepIndex(
+//   keyValue: number,
+//   start: number = 0.9,
+//   end: number = 0.05,
+//   steps: number = 11
+// ): number {
+//   // Calculate step size
+//   const stepSize = (end - start) / (steps - 1);
+
+//   // Calculate the relative position of the key value
+//   const position = (keyValue - start) / stepSize;
+
+//   // Round to nearest index
+//   return Math.round(position);
+// }

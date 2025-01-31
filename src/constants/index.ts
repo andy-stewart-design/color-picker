@@ -2,6 +2,7 @@ import { ColorFormData } from "@/types";
 import { roundTo } from "@/utils/math";
 
 const keyColor = getKeyColor();
+const COLOR_MODE = "okhsl";
 
 const DEFAULT_VALUES = {
   hex: keyColor ? keyColor.hex : "43c5ef",
@@ -17,7 +18,7 @@ const GRID_ROWS = Array.from({ length: 23 }, () => ({
   id: crypto.randomUUID(),
 }));
 
-export { DEFAULT_VALUES, CARD_IDS, GRID_ROWS };
+export { DEFAULT_VALUES, CARD_IDS, GRID_ROWS, COLOR_MODE };
 
 // -------------------------------------------------------
 // HELPER FUNCTIONS

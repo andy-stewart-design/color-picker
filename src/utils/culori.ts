@@ -8,16 +8,16 @@ const converterHSL = converter("hsl");
 const converterRGB = converter("rgb");
 const converterOKLCH = converter("oklch");
 
-function okhsl(color: string) {
+function hsl(color: string) {
   const colorHSL = converterHSL(color);
   const colorOKHSL = converterOKHSL(color);
   console.log("colorHSL", colorHSL);
-  console.log("converterOKHSL", colorOKHSL);
-  console.log("diff", getDistanceFromWhite(color));
+  console.log("colorOKHSL", colorOKHSL?.l);
+  console.log("okhsl index:", findStepIndex(colorOKHSL?.l ?? 0));
 
-  if (!colorHSL) throw new Error(`Invalid color: ${color}`);
+  if (!colorOKHSL) throw new Error(`Invalid color: ${color}`);
 
-  const { h, s, l, mode } = colorHSL;
+  const { h, s, l, mode } = colorOKHSL;
   if (h === undefined) {
     return { h: 0, s, l, mode };
   }
@@ -52,32 +52,20 @@ function format(color: string, mode: ColorMode = "rgb") {
   }
 }
 
-export { okhsl as hsl, format };
+export { hsl as hsl, format };
 
-function getDistanceFromWhite(hexColor: string): number {
-  // Remove '#' if present and convert to uppercase
-  const hex = hexColor.replace("#", "").toUpperCase();
+function findStepIndex(
+  keyValue: number,
+  start: number = 0.9,
+  end: number = 0.05,
+  steps: number = 11
+): number {
+  // Calculate step size
+  const stepSize = (end - start) / (steps - 1);
 
-  // Validate hex color format
-  if (!/^[0-9A-F]{6}$/.test(hex)) {
-    throw new Error(
-      'Invalid hex color format. Expected format: "#FFFFFF" or "FFFFFF"'
-    );
-  }
+  // Calculate the relative position of the key value
+  const position = (keyValue - start) / stepSize;
 
-  // Convert hex to RGB
-  const r = parseInt(hex.slice(0, 2), 16);
-  const g = parseInt(hex.slice(2, 4), 16);
-  const b = parseInt(hex.slice(4, 6), 16);
-
-  // Calculate Euclidean distance from white (255, 255, 255)
-  const distance = Math.sqrt(
-    Math.pow(255 - r, 2) + Math.pow(255 - g, 2) + Math.pow(255 - b, 2)
-  );
-
-  // Maximum possible distance is from white to black: sqrt(3 * 255^2) ≈ 441.67
-  const MAX_DISTANCE = Math.sqrt(3 * Math.pow(255, 2));
-
-  // Normalize to 0-1 range
-  return distance / MAX_DISTANCE;
+  // Round to nearest index
+  return Math.round(position);
 }

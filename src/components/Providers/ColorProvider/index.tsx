@@ -5,6 +5,7 @@ import { createLinearDistribution, getSaturationValue } from "@/utils/color";
 import { generateColorNames } from "@/utils/generate-color-names";
 import { useSetLocalStorage } from "@/hooks/use-set-local-storage";
 import { useSetGlobalColorVariables } from "@/hooks/use-set-global-color-variables";
+import { COLOR_MODE } from "@/constants";
 import type { ColorDefinition, ColorFormData } from "@/types";
 
 interface ColorContextProps {
@@ -30,12 +31,15 @@ function ColorProvider({ children }: { children: ReactNode }) {
     const saturation = getSaturationValue(
       index,
       lightnessArray.keyIndex,
-      formData.s
+      formData.s,
+      formData.numColors
     );
 
     const HSL = { h: formData.h, s: saturation, l: value };
-    return { ...HSL, hex: formatHex({ mode: "hsl", ...HSL }) };
+    return { ...HSL, hex: formatHex({ mode: COLOR_MODE, ...HSL }) };
   });
+
+  console.log(spectrum);
 
   const colorNames = generateColorNames(spectrum.length);
   const updatedFormData = { ...formData, keyIndex: lightnessArray.keyIndex };

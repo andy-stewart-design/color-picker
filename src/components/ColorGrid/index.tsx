@@ -6,7 +6,7 @@ import s from "./style.module.css";
 
 function ColorGrid() {
   const { colorData, colors, colorNames } = useColorContext();
-  const showIndicators = useToggleIndicators();
+  const showIndicators = useToggleIndicators(true);
 
   return (
     <section className={s.gridWrapper}>
@@ -85,8 +85,8 @@ function GridRow({
 // ----------------------------------------------------------------
 // HELPER FUNTIONS
 // ----------------------------------------------------------------
-function useToggleIndicators() {
-  const [showIndicators, setShowIndicators] = useState(false);
+function useToggleIndicators(defaultValue = false) {
+  const [showIndicators, setShowIndicators] = useState(defaultValue);
 
   useEffect(() => {
     function handleKeydown(e: KeyboardEvent) {

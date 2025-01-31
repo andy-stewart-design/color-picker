@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { formatHex } from "culori";
+import { COLOR_MODE } from "@/constants";
 
 function useSetGlobalColorVariables(hue: number, saturation: number) {
   useEffect(() => {
@@ -11,7 +12,7 @@ function useSetGlobalColorVariables(hue: number, saturation: number) {
 }
 
 function formatCSSVariables(h: number, s: number) {
-  const mode = "hsl";
+  const mode = COLOR_MODE;
   return {
     "--color-primary-100": formatHex({ mode, h, s, l: 0.9 }),
     "--color-primary-500": formatHex({ mode, h, s, l: 0.5 }),

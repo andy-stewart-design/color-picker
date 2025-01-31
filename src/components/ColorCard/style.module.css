@@ -50,7 +50,11 @@
   }
 
   .indicators {
-    position: relative;
+    position: absolute;
+    top: 0;
+    left: 20ch;
+    width: calc(100% - 20ch);
+    height: 100%;
     flex: 1 0 0;
     transition: opacity var(--grid-transition-duration)
       var(--grid-transition-easing);

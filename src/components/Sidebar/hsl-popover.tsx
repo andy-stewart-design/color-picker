@@ -4,6 +4,7 @@ import { Button, Dialog, DialogTrigger, Popover } from "react-aria-components";
 import RangeSlider from "@/components/RangeSlider";
 import { useHSLContext } from "@/components/Sidebar/hsl-provider";
 import { useActionContext } from "@/components/Providers/ActionProvider";
+import { COLOR_MODE } from "@/constants";
 import s from "./popover.module.css";
 
 interface Props {
@@ -34,7 +35,7 @@ function HSLPopover({
     };
     return formatHex({
       ...currentHsl,
-      mode: "hsl",
+      mode: COLOR_MODE,
       [key]: value,
     });
   }
