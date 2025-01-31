@@ -7,13 +7,16 @@ import {
   Title,
   Close,
 } from "@radix-ui/react-dialog";
+import { ToggleGroup, ToggleGroupItem } from "@radix-ui/react-toggle-group";
 import { generateCSS } from "@/utils/generate-color-code-snippets";
 import s from "./style.module.css";
 import { useColorContext } from "../Providers/ColorProvider";
+import { ColorMode } from "@/utils/culori";
 
 export default function ExportDialog() {
+  const [colorMode, setColorMode] = useState<ColorMode>("hex");
   const { colors, colorNames } = useColorContext();
-  const css = generateCSS(colors, colorNames);
+  const css = generateCSS(colors, colorNames, colorMode);
 
   return (
     <Portal>
@@ -26,7 +29,18 @@ export default function ExportDialog() {
               <CloseIcon />
             </Close>
           </div>
-          <pre dangerouslySetInnerHTML={{ __html: css }} />
+          <ToggleGroup
+            type="single"
+            className={s.toggles}
+            value={colorMode}
+            onValueChange={(v) => v && setColorMode(v as ColorMode)}
+          >
+            <ToggleGroupItem value="hex">Hex</ToggleGroupItem>
+            <ToggleGroupItem value="rgb">RGB</ToggleGroupItem>
+            <ToggleGroupItem value="hsl">HSL</ToggleGroupItem>
+            <ToggleGroupItem value="oklch">OKLCH</ToggleGroupItem>
+          </ToggleGroup>
+          <pre className={s.code} dangerouslySetInnerHTML={{ __html: css }} />
           <div className={s.footer}>
             <ExportButton copyText={css} />
           </div>

@@ -39,8 +39,6 @@ function ColorProvider({ children }: { children: ReactNode }) {
     return { ...HSL, hex: formatHex({ mode: COLOR_MODE, ...HSL }) };
   });
 
-  console.log(spectrum);
-
   const colorNames = generateColorNames(spectrum.length);
   const updatedFormData = { ...formData, keyIndex: lightnessArray.keyIndex };
 

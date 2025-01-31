@@ -1,6 +1,6 @@
 import { converter } from "culori";
 
-type ColorMode = "hex" | "rgb" | "hsl" | "oklch";
+export type ColorMode = "hex" | "rgb" | "hsl" | "oklch";
 
 // TODO: figure out why okhsl makes the colors go crazy
 const converterOKHSL = converter("okhsl");
@@ -25,7 +25,7 @@ function hsl(color: string) {
   return { h, s, l, mode };
 }
 
-function format(color: string, mode: ColorMode = "rgb") {
+function format(color: string, mode: ColorMode = "hex") {
   if (mode === "rgb") {
     const rgb = converterRGB(color);
     if (!rgb) throw new Error(`Invalid color: ${color}`);
