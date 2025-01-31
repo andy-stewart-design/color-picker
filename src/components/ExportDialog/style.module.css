@@ -63,7 +63,7 @@
     font-weight: 500;
     min-width: 8ch;
     color: var(--color-primary-900);
-    background: var(--color-primary-100);
+    background: var(--color-neutral-100);
     padding: 0.5rem 0;
     border: none;
     border-radius: 3px;
@@ -78,7 +78,7 @@
 
 .code {
   color: var(--color-primary-900);
-  background: var(--color-primary-100);
+  background: var(--color-neutral-100);
   padding: 1.5rem 1rem;
   line-height: 1.75;
 
