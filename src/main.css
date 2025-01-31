@@ -9,6 +9,11 @@
 
   font-family: system-ui, -apple-system, sans-serif;
 
+  ::selection {
+    background-color: var(--color-primary-200);
+    color: var(--color-primary-900);
+  }
+
   body {
     margin: 0;
   }

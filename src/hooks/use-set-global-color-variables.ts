@@ -18,6 +18,7 @@ function formatCSSVariables(h: number, s: number) {
     "--color-neutral-100": formatHex({ mode, h, s: 0.1, l: 0.95 }),
     "--color-neutral-900": formatHex({ mode, h, s: 0.1, l: 0.1 }),
     "--color-primary-100": formatHex({ mode, h, s, l: 0.95 }),
+    "--color-primary-200": formatHex({ mode, h, s, l: 0.8 }),
     "--color-primary-500": formatHex({ mode, h, s, l: 0.5 }),
     "--color-primary-900": formatHex({ mode, h, s, l: 0.1 }),
     "--color-primary-saturated": formatHex({ mode, h, s: 0.9, l: 0.5 }),
