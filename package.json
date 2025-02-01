@@ -12,6 +12,7 @@
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.5",
     "@radix-ui/react-popover": "^1.1.5",
+    "@radix-ui/react-select": "^2.1.5",
     "@radix-ui/react-toggle-group": "^1.1.1",
     "browserslist": "^4.24.4",
     "clsx": "^2.1.1",
@@ -23,7 +24,7 @@
   "devDependencies": {
     "@eslint/js": "^9.19.0",
     "@types/culori": "^2.1.1",
-    "@types/node": "^22.10.10",
+    "@types/node": "^22.13.0",
     "@types/react": "19.0.8",
     "@types/react-dom": "19.0.3",
     "@vitejs/plugin-react": "^4.3.4",
@@ -33,7 +34,7 @@
     "globals": "^15.14.0",
     "lightningcss": "^1.29.1",
     "typescript": "^5.7.3",
-    "typescript-eslint": "^8.21.0",
+    "typescript-eslint": "^8.22.0",
     "vite": "^6.0.11"
   }
 }
