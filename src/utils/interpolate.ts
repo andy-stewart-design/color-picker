@@ -29,8 +29,11 @@ const easings = {
   },
 };
 
+const easingOptions = Object.keys(easings);
+type EasingOption = keyof typeof easings;
+
 interface InterpolationOptions {
-  easing?: keyof typeof easings;
+  easing?: EasingOption;
   precision?: number;
 }
 
@@ -44,4 +47,10 @@ function interpolate(
   return start + (end - start) * t;
 }
 
-export { interpolate, easings, type InterpolationOptions };
+export {
+  interpolate,
+  easings,
+  easingOptions,
+  type InterpolationOptions,
+  type EasingOption,
+};

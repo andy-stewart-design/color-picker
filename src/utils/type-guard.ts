@@ -1,3 +1,5 @@
+import { EasingOption, easingOptions } from "./interpolate";
+
 type NativeType =
   | "string"
   | "number"
@@ -31,4 +33,8 @@ function isOfType<T extends NativeType>(
   return typeof value === type;
 }
 
-export { isOfType };
+function isEasingOption(value: unknown): value is EasingOption {
+  return isOfType("string", value) && easingOptions.includes(value);
+}
+
+export { isOfType, isEasingOption };

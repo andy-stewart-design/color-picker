@@ -1,3 +1,5 @@
+import { EasingOption } from "./utils/interpolate";
+
 export interface ColorDefinition {
   hex: string;
   h: number;
@@ -8,4 +10,5 @@ export interface ColorDefinition {
 export interface ColorFormData extends ColorDefinition {
   numColors: number;
   keyIndex: number;
+  saturationEase: EasingOption;
 }

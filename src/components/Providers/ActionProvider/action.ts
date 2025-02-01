@@ -1,7 +1,7 @@
 /* eslint-disable no-case-declarations */
 import { formatHex } from "culori";
 import { hsl } from "@/utils/culori";
-import { isOfType } from "@/utils/type-guard";
+import { isEasingOption, isOfType } from "@/utils/type-guard";
 import { COLOR_MODE } from "@/constants";
 import type { ColorFormData } from "@/types";
 
@@ -12,6 +12,7 @@ type ColorActionType =
   | "lightness"
   | "keyIndex"
   | "numColors"
+  | "saturationEase"
   | (string & {});
 
 interface ColorAction {
@@ -32,6 +33,7 @@ function colorReducer(state: ColorFormData, action: ColorAction) {
         l: nextHsl.l,
         numColors: data.numColors,
         keyIndex: -1,
+        saturationEase: data.saturationEase,
       };
     case "hue":
     case "saturation":
@@ -54,10 +56,11 @@ function colorReducer(state: ColorFormData, action: ColorAction) {
         hex: nextHex.replace("#", ""),
         numColors: data.numColors,
         keyIndex: -1,
+        saturationEase: data.saturationEase,
       };
     case "keyIndex":
-      return data;
     case "numColors":
+    case "saturationEase":
       return data;
     default:
       throw new Error(`${action.type} is not a valid action type`);
@@ -83,6 +86,9 @@ function validateFormData(
     keyIndex: isOfType("string", d.keyIndex)
       ? Number(d.keyIndex)
       : previousState.keyIndex,
+    saturationEase: isEasingOption(d.saturationEase)
+      ? d.saturationEase
+      : previousState.saturationEase,
   };
 }
 

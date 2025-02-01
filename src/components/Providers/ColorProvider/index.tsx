@@ -1,3 +1,5 @@
+// TODO: Fix Saturation Easing Types
+
 import { createContext, useContext, type ReactNode } from "react";
 import { formatHex } from "culori";
 import { useActionContext } from "@/components/Providers/ActionProvider";
@@ -33,7 +35,7 @@ function ColorProvider({ children }: { children: ReactNode }) {
       lightnessArray.keyIndex,
       formData.s,
       formData.numColors,
-      { easing: "easeIn", precision: 2 }
+      { easing: formData.saturationEase, precision: 2 }
     );
 
     const HSL = { h: formData.h, s: saturation, l: value };

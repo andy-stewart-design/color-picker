@@ -5,9 +5,10 @@ import NumberInput from "@/components/NumberInput";
 import HSLProvider from "@/components/Sidebar/hsl-provider";
 import HSLHiddenInputs from "@/components/Sidebar/hsl-hidden-inputs";
 import { useFormContext } from "@/components/Providers/FormProvider";
-import { useActionContext } from "../Providers/ActionProvider";
+import { useColorContext } from "@/components/Providers/ColorProvider";
+import SelectMenu from "@/components/SelectMenu";
+import { useActionContext } from "@/components/Providers/ActionProvider";
 import s from "./style.module.css";
-import { useColorContext } from "../Providers/ColorProvider";
 
 function Sidebar() {
   const { updateColor } = useActionContext();
@@ -50,6 +51,7 @@ function Sidebar() {
           >
             Key Index
           </NumberInput>
+          <SelectMenu />
         </form>
         <div className={s.exportTrigger}>
           <DialogTrigger>Export palette</DialogTrigger>
