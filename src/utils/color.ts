@@ -1,4 +1,5 @@
 import { roundTo } from "./math";
+import { easings, interpolate, InterpolationOptions } from "./interpolate";
 
 function createLinearDistribution(
   seed: number,
@@ -68,31 +69,80 @@ function getDistributionParams(
   }
 }
 
+// function getSaturationValue(
+//   index: number,
+//   keyIndex: number,
+//   keySaturation: number,
+//   numSteps: number
+// ) {
+//   if (keyIndex === 0) {
+//     const minValue = Math.max(0, keySaturation - keySaturation / 2);
+//     const maxValue = keySaturation;
+//     const range = maxValue - minValue;
+//     const step = range / numSteps;
+//     return roundTo(maxValue - step * index, 4);
+//   } else {
+//     const minValue = Math.max(
+//       0,
+//       keySaturation - (keySaturation / 8) * keyIndex
+//     );
+//     const maxValue = keySaturation;
+//     const range = maxValue - minValue;
+//     const minStep = range / keyIndex;
+//     const maxStep = range / (numSteps - keyIndex);
+//     if (index <= keyIndex) {
+//       return roundTo(maxValue - minStep * (keyIndex - index), 4);
+//     } else {
+//       return roundTo(maxValue - maxStep * (index - keyIndex), 4);
+//     }
+//   }
+// }
+
 function getSaturationValue(
   index: number,
   keyIndex: number,
   keySaturation: number,
-  numSteps: number
-) {
+  numSteps: number,
+  options: InterpolationOptions = {}
+): number {
+  const { easing = "linear", precision = 4 } = options;
+
+  const easingFunction = easings[easing];
+
   if (keyIndex === 0) {
-    const minValue = Math.max(0, keySaturation - keySaturation / 2);
-    const maxValue = keySaturation;
-    const range = maxValue - minValue;
-    const step = range / numSteps;
-    return roundTo(maxValue - step * index, 4);
+    // For keyIndex 0, maintain original behavior with half saturation range
+    const step = keySaturation / (2 * numSteps);
+    const value = keySaturation - step * index;
+    return roundTo(Math.max(0, value), precision);
   } else {
-    const minValue = Math.max(
-      0,
-      keySaturation - (keySaturation / 8) * keyIndex
-    );
-    const maxValue = keySaturation;
-    const range = maxValue - minValue;
-    const minStep = range / keyIndex;
-    const maxStep = range / (numSteps - keyIndex);
+    // Calculate the step size based on the key index position
+    const stepsAbove = numSteps - keyIndex;
+    const stepsBelow = keyIndex;
+    const totalSteps = Math.max(stepsAbove, stepsBelow) * 2; // Double to ensure even distribution
+    const step = keySaturation / totalSteps;
+
     if (index <= keyIndex) {
-      return roundTo(maxValue - minStep * (keyIndex - index), 4);
+      // Calculate values for indices below or at key index
+      const stepsFromKey = keyIndex - index;
+      const progress = stepsFromKey / stepsBelow;
+      const value = interpolate(
+        keySaturation,
+        Math.max(0, keySaturation - step * stepsBelow),
+        progress,
+        easingFunction
+      );
+      return roundTo(value, precision);
     } else {
-      return roundTo(maxValue - maxStep * (index - keyIndex), 4);
+      // Calculate values for indices above key index
+      const stepsFromKey = index - keyIndex;
+      const progress = stepsFromKey / stepsAbove;
+      const value = interpolate(
+        keySaturation,
+        Math.max(0, keySaturation - step * stepsAbove),
+        progress,
+        easingFunction
+      );
+      return roundTo(value, precision);
     }
   }
 }

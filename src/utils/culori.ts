@@ -9,12 +9,7 @@ const converterRGB = converter("rgb");
 const converterOKLCH = converter("oklch");
 
 function hsl(color: string) {
-  const colorHSL = converterHSL(color);
   const colorOKHSL = converterOKHSL(color);
-  console.log("colorHSL", colorHSL);
-  console.log("colorOKHSL", colorOKHSL?.l);
-  console.log("okhsl index:", findStepIndex(colorOKHSL?.l ?? 0));
-
   if (!colorOKHSL) throw new Error(`Invalid color: ${color}`);
 
   const { h, s, l, mode } = colorOKHSL;
@@ -53,19 +48,3 @@ function format(color: string, mode: ColorMode = "hex") {
 }
 
 export { hsl as hsl, format };
-
-function findStepIndex(
-  keyValue: number,
-  start: number = 0.9,
-  end: number = 0.05,
-  steps: number = 11
-): number {
-  // Calculate step size
-  const stepSize = (end - start) / (steps - 1);
-
-  // Calculate the relative position of the key value
-  const position = (keyValue - start) / stepSize;
-
-  // Round to nearest index
-  return Math.round(position);
-}

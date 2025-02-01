@@ -32,7 +32,8 @@ function ColorProvider({ children }: { children: ReactNode }) {
       index,
       lightnessArray.keyIndex,
       formData.s,
-      formData.numColors
+      formData.numColors,
+      { easing: "easeIn", precision: 2 }
     );
 
     const HSL = { h: formData.h, s: saturation, l: value };
