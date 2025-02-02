@@ -10,6 +10,7 @@ import { useColorContext } from "@/components/Providers/ColorProvider";
 import SelectMenu from "@/components/SelectMenu";
 import { useActionContext } from "@/components/Providers/ActionProvider";
 import s from "./style.module.css";
+import { DEFAULT_VALUES } from "@/constants";
 
 function Sidebar() {
   const { updateColor } = useActionContext();
@@ -33,16 +34,6 @@ function Sidebar() {
           />
           <HSLHiddenInputs systemValues={colorData} />
           <NumberInput
-            key={`numColors-${colorData.numColors}`}
-            name="numColors"
-            defaultValue={colorData.numColors}
-            min={3}
-            max={23}
-            onSubmit={() => updateColor("numColors")}
-          >
-            Palette Size
-          </NumberInput>
-          <NumberInput
             key={`keyIndex-${colorData.keyIndex}`}
             name="keyIndex"
             defaultValue={colorData.keyIndex}
@@ -53,6 +44,16 @@ function Sidebar() {
             Key Color Index
           </NumberInput>
           <hr />
+          <NumberInput
+            key={`numColors-${colorData.numColors}`}
+            name="numColors"
+            defaultValue={colorData.numColors}
+            min={3}
+            max={23}
+            onSubmit={() => updateColor("numColors")}
+          >
+            Palette Size
+          </NumberInput>
           <SelectMenu />
           <SaturationFalloffSlider />
         </form>
@@ -73,7 +74,7 @@ function SaturationFalloffSlider() {
     <RangeSlider
       name="saturationFalloff"
       label="Saturation Falloff"
-      defaultValue={0.25}
+      defaultValue={DEFAULT_VALUES.saturationFalloff}
       min={0}
       max={1}
       step={0.01}

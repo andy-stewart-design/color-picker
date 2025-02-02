@@ -43,7 +43,13 @@ function ColorProvider({ children }: { children: ReactNode }) {
     );
 
     const HSL = { h: formData.h, s: saturation, l: value };
-    return { ...HSL, hex: formatHex({ mode: COLOR_MODE, ...HSL }) };
+    return {
+      ...HSL,
+      hex:
+        index === formData.keyIndex
+          ? `#${formData.hex}`
+          : formatHex({ mode: COLOR_MODE, ...HSL }),
+    };
   });
 
   const colorNames = generateColorNames(spectrum.length);

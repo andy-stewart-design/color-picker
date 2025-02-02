@@ -2,6 +2,7 @@ import * as Select from "@radix-ui/react-select";
 import * as Label from "@radix-ui/react-label";
 import { useActionContext } from "../Providers/ActionProvider";
 import s from "./style.module.css";
+import { DEFAULT_VALUES } from "@/constants";
 
 function SelectMenu() {
   const { updateColor } = useActionContext();
@@ -11,7 +12,7 @@ function SelectMenu() {
       <Label.Root htmlFor="saturationEase">Saturation Easing</Label.Root>
       <Select.Root
         name="saturationEase"
-        defaultValue="easeOut"
+        defaultValue={DEFAULT_VALUES.saturationEase}
         onValueChange={() => updateColor("saturationEase")}
       >
         <Select.Trigger

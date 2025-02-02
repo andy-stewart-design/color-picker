@@ -11,10 +11,17 @@
   border: 1px solid rgba(0, 0, 0, 0.2);
   padding: 0.5rem;
   font-size: 0.875rem;
+
+  &:focus {
+    outline: none;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-primary-500);
+  }
 }
 
 .menu {
-  overflow: hidden;
   background-color: white;
   border-radius: 6px;
   padding: 0.5rem;
@@ -27,6 +34,14 @@
   padding: 0.25rem;
 
   &:hover {
+    background: var(--color-primary-100);
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  &:focus-visible {
     background: var(--color-primary-100);
   }
 }
