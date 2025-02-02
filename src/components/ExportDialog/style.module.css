@@ -53,6 +53,14 @@
   display: flex;
   gap: 0.25rem;
   padding: 0 0.75rem 0.75rem;
+  overflow-x: scroll;
+  width: 100%;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 
   @media (width >= 480px) {
     padding: 0 1.5rem 0.75rem;
@@ -81,6 +89,8 @@
   background: var(--color-neutral-100);
   padding: 1.5rem 1rem;
   line-height: 1.75;
+  overflow-x: scroll;
+  width: 100%;
 
   @media (width >= 480px) {
     padding: 1.5rem 2rem;

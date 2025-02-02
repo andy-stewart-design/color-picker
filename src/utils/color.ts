@@ -111,8 +111,19 @@ function getSaturationValue(
 
   if (keyIndex === 0) {
     // For keyIndex 0, maintain original behavior with half saturation range
-    const step = keySaturation / (2 * numSteps);
-    const value = keySaturation - step * index;
+    const minSaturation = keySaturation - keySaturation * (1 - fallOff);
+    const step = minSaturation / numSteps;
+    // const value = keySaturation - step * index;
+
+    const stepsFromKey = index - keyIndex;
+    const progress = stepsFromKey / numSteps;
+    const value = interpolate(
+      keySaturation,
+      Math.max(0, keySaturation - step * numSteps),
+      progress,
+      easingFunction
+    );
+
     return roundTo(Math.max(0, value), precision);
   } else {
     // Calculate the step size based on the key index position
