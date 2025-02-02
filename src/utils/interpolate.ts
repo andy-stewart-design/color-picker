@@ -35,6 +35,7 @@ type EasingOption = keyof typeof easings;
 interface InterpolationOptions {
   easing?: EasingOption;
   precision?: number;
+  fallOff?: number;
 }
 
 function interpolate(

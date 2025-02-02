@@ -105,7 +105,7 @@ function getSaturationValue(
   numSteps: number,
   options: InterpolationOptions = {}
 ): number {
-  const { easing = "linear", precision = 4 } = options;
+  const { easing = "linear", precision = 4, fallOff = 0.5 } = options;
 
   const easingFunction = easings[easing];
 
@@ -118,8 +118,9 @@ function getSaturationValue(
     // Calculate the step size based on the key index position
     const stepsAbove = numSteps - keyIndex;
     const stepsBelow = keyIndex;
-    const totalSteps = Math.max(stepsAbove, stepsBelow) * 2; // Double to ensure even distribution
-    const step = keySaturation / totalSteps;
+    const totalSteps = Math.max(stepsAbove, stepsBelow); // Double to ensure even distribution
+    const minSaturation = keySaturation - keySaturation * (1 - fallOff);
+    const step = minSaturation / totalSteps;
 
     if (index <= keyIndex) {
       // Calculate values for indices below or at key index

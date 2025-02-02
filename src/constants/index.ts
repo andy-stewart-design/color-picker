@@ -12,6 +12,7 @@ const DEFAULT_VALUES: ColorFormData = {
   numColors: keyColor ? keyColor.numColors : 11,
   keyIndex: keyColor ? keyColor.keyIndex : -1,
   saturationEase: "easeOut",
+  saturationFalloff: 0.25,
 };
 
 const CARD_IDS = Array.from({ length: 23 }, () => crypto.randomUUID());

@@ -11,4 +11,5 @@ export interface ColorFormData extends ColorDefinition {
   numColors: number;
   keyIndex: number;
   saturationEase: EasingOption;
+  saturationFalloff: number;
 }

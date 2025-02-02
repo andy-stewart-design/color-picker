@@ -4,6 +4,7 @@ import KeyColorInput from "@/components/HexInput";
 import NumberInput from "@/components/NumberInput";
 import HSLProvider from "@/components/Sidebar/hsl-provider";
 import HSLHiddenInputs from "@/components/Sidebar/hsl-hidden-inputs";
+import RangeSlider from "@/components/RangeSlider";
 import { useFormContext } from "@/components/Providers/FormProvider";
 import { useColorContext } from "@/components/Providers/ColorProvider";
 import SelectMenu from "@/components/SelectMenu";
@@ -49,9 +50,11 @@ function Sidebar() {
             max={colorData.numColors - 1}
             onSubmit={() => updateColor("keyIndex")}
           >
-            Key Index
+            Key Color Index
           </NumberInput>
+          <hr />
           <SelectMenu />
+          <SaturationFalloffSlider />
         </form>
         <div className={s.exportTrigger}>
           <DialogTrigger>Export palette</DialogTrigger>
@@ -62,3 +65,21 @@ function Sidebar() {
 }
 
 export default Sidebar;
+
+function SaturationFalloffSlider() {
+  const { updateColor } = useActionContext();
+
+  return (
+    <RangeSlider
+      name="saturationFalloff"
+      label="Saturation Falloff"
+      defaultValue={0.25}
+      min={0}
+      max={1}
+      step={0.01}
+      onChange={() => updateColor("saturationFalloff")}
+      onChangeEnd={() => updateColor("saturationFalloff")}
+      onKeyUp={() => updateColor("saturationFalloff")}
+    />
+  );
+}

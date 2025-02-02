@@ -13,6 +13,7 @@ type ColorActionType =
   | "keyIndex"
   | "numColors"
   | "saturationEase"
+  | "saturationFalloff"
   | (string & {});
 
 interface ColorAction {
@@ -27,13 +28,12 @@ function colorReducer(state: ColorFormData, action: ColorAction) {
     case "hex":
       const nextHsl = hsl(`#${data.hex}`);
       return {
+        ...data,
         hex: data.hex,
         h: nextHsl.h,
         s: nextHsl.s,
         l: nextHsl.l,
-        numColors: data.numColors,
         keyIndex: -1,
-        saturationEase: data.saturationEase,
       };
     case "hue":
     case "saturation":
@@ -50,17 +50,17 @@ function colorReducer(state: ColorFormData, action: ColorAction) {
       });
 
       return {
+        ...data,
         h: nextH,
         s: nextS,
         l: nextL,
         hex: nextHex.replace("#", ""),
-        numColors: data.numColors,
         keyIndex: -1,
-        saturationEase: data.saturationEase,
       };
     case "keyIndex":
     case "numColors":
     case "saturationEase":
+    case "saturationFalloff":
       return data;
     default:
       throw new Error(`${action.type} is not a valid action type`);
@@ -89,6 +89,9 @@ function validateFormData(
     saturationEase: isEasingOption(d.saturationEase)
       ? d.saturationEase
       : previousState.saturationEase,
+    saturationFalloff: isOfType("string", d.saturationFalloff)
+      ? Number(d.saturationFalloff)
+      : previousState.saturationFalloff,
   };
 }
 
