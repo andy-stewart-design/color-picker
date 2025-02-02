@@ -9,8 +9,11 @@
   align-items: center;
   background: transparent;
   border: 1px solid rgba(0, 0, 0, 0.2);
-  padding: 0.5rem;
+  border-radius: 100vmax;
+  padding: 0.675rem 1rem;
   font-size: 0.875rem;
+  margin-left: -0.5rem;
+  margin-right: -0.5rem;
 
   &:focus {
     outline: none;
@@ -30,6 +33,9 @@
 }
 
 .option {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   font-size: 0.875rem;
   padding: 0.25rem;
 
@@ -43,5 +49,14 @@
 
   &:focus-visible {
     background: var(--color-primary-100);
+  }
+
+  &[data-state="checked"] {
+    font-weight: 500;
+    color: var(--color-primary-500);
+  }
+
+  svg {
+    color: var(--color-primary-500);
   }
 }

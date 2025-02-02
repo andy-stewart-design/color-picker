@@ -43,6 +43,7 @@
 .exportTrigger {
   display: grid;
   padding: 2rem;
+  user-select: none;
 
   button {
     font-weight: 500;
