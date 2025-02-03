@@ -16,3 +16,35 @@
     /* grid-template-rows: auto; */
   }
 }
+
+.mobileScreen {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  color: var(--color-primary-100);
+  background: linear-gradient(
+    to bottom,
+    var(--color-primary-200) 0% 33.333%,
+    var(--color-primary-600) 33.33% 66.66%,
+    var(--color-primary-900) 66.66%
+  );
+
+  p {
+    text-align: center;
+    font-weight: 500;
+    max-width: 36ch;
+    text-wrap: balance;
+  }
+
+  @media (width >= 800px) {
+    display: none;
+  }
+}

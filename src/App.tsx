@@ -13,6 +13,7 @@ function App() {
         <ColorGrid />
       </main>
       <ExportDialog />
+      <MobileShim />
     </ExportDialogRoot>
   );
 }
@@ -22,6 +23,17 @@ function Layout() {
     <Providers>
       <App />
     </Providers>
+  );
+}
+
+function MobileShim() {
+  return (
+    <div className={s.mobileScreen}>
+      <p>
+        Sorry, I didn't have time to make this usable on mobile. Please try
+        again on a larger screen.
+      </p>
+    </div>
   );
 }
 
